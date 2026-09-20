@@ -1,12 +1,10 @@
 name: Deploy
 
-# Trigger the workflow on push and
-# pull request events on the master branch
+# Deploy only on push to main. Pull requests must not reach production.
 on:
   push:
-    branches: ["master", "main"]
-  pull_request:
-    branches: ["master", "main"]
+    branches: ["main"]
+  workflow_dispatch:
 
 # Authenticate to the the server via ssh
 # and run our deployment script
