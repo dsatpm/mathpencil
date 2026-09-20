@@ -19,12 +19,16 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: DESCRIPTION },
     { property: "og:type", content: "website" },
     { property: "og:url", content: absoluteUrl("/") },
-    { property: "og:image", content: absoluteUrl("/mathpencil.png") },
+    { property: "og:image", content: absoluteUrl("/og.png") },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
     { property: "og:image:alt", content: "The MathPencil wordmark" },
-    { name: "twitter:card", content: "summary" },
+    // 1200×630 is the size a large card wants; the small wordmark would have
+    // been letterboxed or rejected.
+    { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: TITLE },
     { name: "twitter:description", content: DESCRIPTION },
-    { name: "twitter:image", content: absoluteUrl("/mathpencil.png") },
+    { name: "twitter:image", content: absoluteUrl("/og.png") },
   ];
 }
 
