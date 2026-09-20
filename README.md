@@ -121,5 +121,10 @@ docker run -p 3000:3000 mathpencil
 ---
 
 Built by <a href="https://htpdevs.tech">
-  <img src="docs/htpdevs.jpg" alt="HTPdevs" width="140" />
+  <picture>
+    <!-- The transparent mark is white type, so it only survives on a dark
+         ground; light themes get the version with its own background. -->
+    <source media="(prefers-color-scheme: dark)" srcset="public/htpdevs.png" />
+    <img src="docs/htpdevs.jpg" alt="HTPdevs" width="140" />
+  </picture>
 </a>
