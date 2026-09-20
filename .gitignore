@@ -1,0 +1,19 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# Build artefacts that are produced, not authored
+/build.zip
+*.tsbuildinfo
+
+# Agent and tooling scratch
+.agents/
+.claude/
+.impeccable/
+.playwright-mcp/

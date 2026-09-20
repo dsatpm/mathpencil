@@ -1,0 +1,18 @@
+.git
+.gitignore
+.react-router
+build
+build.zip
+node_modules
+.DS_Store
+.env
+.env.*
+
+# Docs and agent scratch never reach the image
+README.md
+DESIGN.md
+PRODUCT.md
+.agents
+.claude
+.impeccable
+.playwright-mcp
