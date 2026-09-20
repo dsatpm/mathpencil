@@ -1,9 +1,11 @@
 # MathPencil
 
+<a href="https://mathpencil.com">
+  <img src="public/mathpencil.png" alt="MathPencil logo" width="300" />
+</a>
+
 A calculator that prints its working to a paper tape, the way a desktop adding
-machine does. Every press is printed, the total is struck in ribbon red, and a
-second field takes a sum that is already written down — `(12 + 5) × 3 ÷ 2` —
-and solves it whole. Live site: [mathpencil.com](https://mathpencil.com)
+machine does.
 
 Server-rendered with React Router 8, styled with Tailwind 4.
 
@@ -118,4 +120,6 @@ docker run -p 3000:3000 mathpencil
 
 ---
 
-Built by HTPdevs.
+Built by <a href="https://htpdevs.tech">
+  <img src="docs/htpdevs.jpg" alt="HTPdevs" width="140" />
+</a>
