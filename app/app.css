@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   The Adding-Machine Tape
+   A printing adding machine on a desk. The tape is the interface; the total is
+   struck at the bottom in ribbon red. Five inks, each meaning exactly one
+   thing — desk, paper, impact ink, ribbon, and the orange of a key that acts.
+--------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Sometype Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/sometype-mono-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Familjen Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/familjen-grotesk-latin.woff2") format("woff2");
+}
+
+@theme {
+  /* The desk. Owns the ground, never carries content. */
+  --color-desk: #f4efe6;
+  --color-desk-deep: #0c211f;
+  --color-desk-edge: #1c423c;
+
+  /* The paper. The only light object on screen. */
+  --color-tape: #f2ece0;
+  --color-tape-shade: #e3dacb;
+  --color-docket: #e9e2d3;
+
+  /* Impact ink: what you typed. */
+  --color-ink: #241f1c;
+  --color-ink-soft: #5c544a;
+
+  /* Ribbon red: totals and negatives only. */
+  --color-ribbon: #c0392b;
+
+  /* Olivetti orange: controls that act, and nothing else. */
+  --color-key-act: #e8622a;
+  --color-key-act-deep: #b8481c;
+
+  /* The machine body and its rubber keys. */
+  --color-body: #2c3a37;
+  --color-body-lip: #3b4b47;
+  --color-key: #1d2725;
+  --color-key-face: #f4efe6;
+  --color-platen: #171f1d;
+
+  --font-mono: "Sometype Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* Two durations, nothing else: a strike, and paper advancing. */
+  --ease-paper: cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+html {
+  background-color: var(--color-desk-deep);
+  color-scheme: dark;
+  /* No font-size is set here on purpose. Every measurement in the machine is
+     in `rem`, so whatever a browser's own text-size setting makes of the root
+     size, the paper, the keys and the figures all grow together. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-desk-deep);
+  color: var(--color-tape);
+  font-family: var(--font-sans);
+  /* Tabular figures everywhere: numbers in a column must not shift width. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Browser surfaces: the parts we did not draw still carry the world. --- */
+
+::selection {
+  background-color: var(--color-key-act);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-key-act);
+  outline-offset: 2px;
+}
+
+/* On paper, the focus ring switches to ink so it reads against cream. */
+.on-paper :focus-visible {
+  outline-color: var(--color-ink);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-desk-edge) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-desk-edge);
+  border-radius: 0;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+input {
+  caret-color: var(--color-ribbon);
+}
+
+/* Keys should not wait 300ms to see whether a tap was a double-tap. This still
+   leaves pinch-zoom alone, which is how the machine is made bigger on a phone. */
+button,
+a {
+  touch-action: manipulation;
+}
+
+/* --- The strike: impact printing snaps, it never fades. --- */
+
+@keyframes strike {
+  0% {
+    transform: translateY(1px);
+    opacity: 0.55;
+  }
+  40% {
+    transform: translateY(0);
+    opacity: 1;
+    filter: brightness(0.82);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    filter: none;
+  }
+}
+
+.strike {
+  animation: strike 90ms linear both;
+}
+
+/* Paper has inertia, so the advance is the one eased motion on the page. */
+@keyframes advance {
+  from {
+    transform: translateY(-1.35em);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.advance {
+  animation: advance 220ms var(--ease-paper) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strike,
+  .advance {
+    animation: none;
+  }
+}
