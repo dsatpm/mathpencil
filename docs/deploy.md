@@ -64,25 +64,55 @@ To mint a fresh keypair for CI:
 
 ```bash
 ssh-keygen -t ed25519 -C "github-actions-mathpencil" -f ~/.ssh/mathpencil_deploy -N ""
-ssh-copy-id -i ~/.ssh/mathpencil_deploy.pub <user>@2.25.131.201
+ssh-copy-id -i ~/.ssh/mathpencil_deploy.pub DEPLOY_USER@2.25.131.201
 gh secret set SSHKEY < ~/.ssh/mathpencil_deploy
 ```
 
 Verify before relying on it:
 
 ```bash
-ssh -i ~/.ssh/mathpencil_deploy <user>@2.25.131.201 'echo ok'
+ssh -i ~/.ssh/mathpencil_deploy DEPLOY_USER@2.25.131.201 'echo ok'
 ```
 
 ## Passwordless sudo
 
+Only needed if the `USERNAME` secret is **not** `root`. Root already has this;
+adding a sudoers entry for it is a no-op.
+
 `deploy.sh` calls `sudo` for `mkdir`, `rsync` and `chown`. A non-interactive SSH
-session cannot answer a password prompt, so grant just those commands via
-`visudo -f /etc/sudoers.d/mathpencil-deploy`:
+session cannot answer a password prompt, so grant exactly those commands.
+
+`rsync` is not installed by default on a minimal Ubuntu image — check first, and
+confirm the real binary paths, because sudoers matches the literal path and a
+`/bin` vs `/usr/bin` mismatch silently fails to grant:
+
+```bash
+command -v mkdir rsync chown
+apt install -y rsync   # if missing
+```
+
+Then `visudo -f /etc/sudoers.d/mathpencil-deploy`, substituting the deploy
+username for `DEPLOY_USER` and the paths from `command -v` above:
 
 ```
-<user> ALL=(root) NOPASSWD: /usr/bin/mkdir, /usr/bin/rsync, /usr/bin/chown
+DEPLOY_USER ALL=(root) NOPASSWD: /usr/bin/mkdir, /usr/bin/rsync, /usr/bin/chown
 ```
+
+Pasting that line verbatim is a syntax error — `DEPLOY_USER` is a placeholder.
+
+```bash
+chmod 0440 /etc/sudoers.d/mathpencil-deploy
+visudo -c   # validate the whole sudoers tree
+```
+
+Verify non-interactively, the way CI will run it:
+
+```bash
+sudo -u DEPLOY_USER sudo -n rsync --version >/dev/null && echo ok
+```
+
+If that prompts instead of printing `ok`, the deploy will hang until the 10
+minute `command_timeout`.
 
 ## nginx
 
