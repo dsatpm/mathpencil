@@ -1,0 +1,13 @@
+[Unit]
+Description=Poll origin/main for mathpencil.com deployments
+
+[Timer]
+# First check shortly after boot, then every two minutes.
+OnBootSec=2min
+OnUnitActiveSec=2min
+# Spread the check so it never lands on an exact minute boundary.
+RandomizedDelaySec=15s
+Unit=mathpencil-deploy.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,19 @@
+[Unit]
+Description=Build and publish mathpencil.com when origin/main changes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/projects/mathpencil
+Environment=HOME=/root
+Environment=NVM_DIR=/root/.nvm
+Environment=GIT_TERMINAL_PROMPT=0
+ExecStart=/root/projects/mathpencil/.scripts/poll-deploy.sh
+
+# A hung npm install must not wedge the timer forever.
+TimeoutStartSec=15min
+
+[Install]
+WantedBy=multi-user.target
