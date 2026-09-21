@@ -25,8 +25,9 @@ nothing to keep alive, and no `proxy_pass`.
 | Webroot | `/var/www/mathpencil` |
 | Checkout | `/root/projects/mathpencil` |
 
-The second VPS, `srv1995537` (`177.7.33.46`, Debian 13), is **not** part of this
-deployment.
+The second VPS, `srv1995537` (`177.7.33.46`, Debian 13), is reserved for a
+different project. It is not part of this deployment and is not idle capacity to
+reclaim — leave it alone.
 
 ## Pipeline — pull, not push
 
