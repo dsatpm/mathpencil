@@ -1,5 +1,3 @@
-# MathPencil
-
 <a href="https://mathpencil.com">
   <img src="public/mathpencil.png" alt="MathPencil logo" width="300" />
 </a>
