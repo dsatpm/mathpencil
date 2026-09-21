@@ -52,6 +52,43 @@
   --color-key-face: #f4efe6;
   --color-platen: #171f1d;
 
+  /* ---------------------------------------------------------------------
+     The scientific instrument.
+
+     A second machine on the same desk, so the desk, the paper and the type
+     are untouched — only the instrument itself changes ink. Where the adding
+     machine is a printing office machine in cream and ribbon red, this is a
+     laboratory instrument: a graphite case, a pale liquid-crystal window, and
+     labels in the two inks an engineer's calculator has always used — blue for
+     a function, gold for the shifted one behind it.
+  --------------------------------------------------------------------- */
+
+  --color-sci-case: #23262b;
+  --color-sci-lip: #31353c;
+  --color-sci-bezel: #14161a;
+
+  /* The window. Liquid crystal is a filter over a pale ground, never a lamp. */
+  --color-sci-lcd: #a9bd9a;
+  --color-sci-lcd-deep: #93a986;
+  --color-sci-lcd-ink: #17220f;
+  --color-sci-lcd-dim: #55693f;
+
+  /* Moulded keys, and the two label inks. */
+  --color-sci-key: #1b1e22;
+  --color-sci-key-face: #e8eae6;
+  --color-sci-key-deep: #0b0d10;
+  --color-sci-fn: #79b0d4;
+  --color-sci-shift-ink: #e2b458;
+
+  /* Operators sit in slate; the answer key is the one gold key on the face. */
+  --color-sci-op: #26485c;
+  --color-sci-op-deep: #15303e;
+  --color-sci-act: #c9962f;
+  --color-sci-act-deep: #8e6418;
+
+  /* A fault in the window, which is not the tape's ribbon red. */
+  --color-sci-fault: #c4522f;
+
   --font-mono: "Sometype Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
 
@@ -93,6 +130,17 @@ body {
 /* On paper, the focus ring switches to ink so it reads against cream. */
 .on-paper :focus-visible {
   outline-color: var(--color-ink);
+}
+
+/* Inside the instrument's window, to the same ink the crystal prints in. */
+.on-lcd :focus-visible {
+  outline-color: var(--color-sci-lcd-ink);
+}
+
+/* The instrument's keys are dark, so their ring takes the gold of its one
+   acting key rather than the adding machine's orange. */
+.on-instrument :focus-visible {
+  outline-color: var(--color-sci-act);
 }
 
 * {
@@ -162,9 +210,31 @@ a {
   animation: advance 220ms var(--ease-paper) both;
 }
 
+/* The crystal's cursor: a hard on/off, because liquid crystal does not fade. */
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret 1.1s steps(1, end) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .strike,
   .advance {
     animation: none;
+  }
+
+  /* The caret stays lit rather than stopping mid-blink. */
+  .caret {
+    animation: none;
+    opacity: 1;
   }
 }

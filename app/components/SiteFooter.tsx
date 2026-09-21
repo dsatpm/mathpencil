@@ -6,6 +6,7 @@ import { NavLink } from "react-router";
  */
 const FOOTER_LINKS: Array<{ to: string; label: string }> = [
   { to: "/", label: "Calculator" },
+  { to: "/scientific", label: "Scientific" },
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
   { to: "/contact", label: "Contact" },

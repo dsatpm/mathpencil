@@ -4,7 +4,10 @@ import { NavLink } from "react-router";
  * The links in the bar. Kept as data so adding the next one is a single line
  * rather than a layout change.
  */
-const NAV_LINKS: Array<{ to: string; label: string }> = [{ to: "/contact", label: "Contact" }];
+const NAV_LINKS: Array<{ to: string; label: string }> = [
+  { to: "/scientific", label: "Scientific" },
+  { to: "/contact", label: "Contact" },
+];
 
 /**
  * The bar above the desk.
