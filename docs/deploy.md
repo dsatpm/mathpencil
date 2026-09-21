@@ -14,7 +14,7 @@ build/client/assets/...           # hashed JS + CSS
 ```
 
 nginx serves that directory directly. There is no Node process in production,
-nothing to keep alive with systemd, and no `proxy_pass`.
+nothing to keep alive, and no `proxy_pass`.
 
 ## Host
 
@@ -23,109 +23,97 @@ nothing to keep alive with systemd, and no `proxy_pass`.
 | VPS | `srv1704054` (Hostinger, KVM 2, Ubuntu 26.04) |
 | IP | `2.25.131.201` — both `@` and `www` A records point here |
 | Webroot | `/var/www/mathpencil` |
-| Checkout | `~/projects/mathpencil` |
+| Checkout | `/root/projects/mathpencil` |
 
-## Pipeline
+The second VPS, `srv1995537` (`177.7.33.46`, Debian 13), is **not** part of this
+deployment.
 
-Push to `main` triggers `.github/workflows/deploy.yml`, which SSHes to the VPS
-and runs `.scripts/deploy.sh`. That script fetches `main`, runs `npm ci` and
-`npm run build`, then rsyncs `build/client/` into the webroot.
+## Pipeline — pull, not push
 
-> `deploy.sh` runs `git reset --hard origin/main` on the server. Any edit made
-> directly on the box inside `~/projects/mathpencil` is discarded on the next
-> deploy. Treat that checkout as disposable — change code here, not there.
+The server polls. GitHub never connects inward.
 
-## Required GitHub secrets
+A systemd timer runs `.scripts/poll-deploy.sh` every two minutes. It compares
+`HEAD` against `origin/main` and exits immediately when they match and
+`index.html` is present. When they differ it hands off to `.scripts/deploy.sh`,
+which fetches, hard-resets, runs `npm ci` and `npm run build`, then rsyncs
+`build/client/` into the webroot.
 
-| Secret | Value |
-|---|---|
-| `HOST` | `2.25.131.201` |
-| `USERNAME` | the deploy user on the VPS |
-| `PORT` | `22` unless changed |
-| `SSHKEY` | the **private** key, whole file |
+This replaced an `appleboy/ssh-action` workflow. That design needed an inbound
+SSH key, a `HOST`/`PORT`/`USERNAME`/`SSHKEY` secret set, and a firewall that
+tolerates connections from GitHub's rotating Azure IP pool — every one of which
+broke in practice. Polling needs none of it: no CI key to rotate, no inbound
+port to expose, nothing to un-ban. Latency is the tradeoff: up to two minutes
+between merge and live.
 
-`SSHKEY` must be the full private key including the header and footer lines:
+`.github/workflows/ci.yml` still runs on push and PR, but only typechecks and
+builds. It holds no secrets and never touches the server. Because `main` deploys
+automatically, that gate is what keeps a broken build off the box.
 
-```
------BEGIN OPENSSH PRIVATE KEY-----
-...
------END OPENSSH PRIVATE KEY-----
-```
+> `deploy.sh` runs `git reset --hard origin/main`. Any edit made directly on the
+> server inside `/root/projects/mathpencil` is discarded on the next poll. Treat
+> that checkout as disposable — change code in the repo, not there.
 
-A missing header line, a missing trailing newline, or pasting the `.pub` file
-produces exactly this failure:
-
-```
-ssh: handshake failed: ssh: unable to authenticate,
-attempted methods [none publickey], no supported methods remain
-```
-
-To mint a fresh keypair for CI:
+## One-time server setup
 
 ```bash
-ssh-keygen -t ed25519 -C "github-actions-mathpencil" -f ~/.ssh/mathpencil_deploy -N ""
-ssh-copy-id -i ~/.ssh/mathpencil_deploy.pub DEPLOY_USER@2.25.131.201
-gh secret set SSHKEY < ~/.ssh/mathpencil_deploy
+install -m 644 /root/projects/mathpencil/.scripts/systemd/mathpencil-deploy.service \
+               /etc/systemd/system/mathpencil-deploy.service
+install -m 644 /root/projects/mathpencil/.scripts/systemd/mathpencil-deploy.timer \
+               /etc/systemd/system/mathpencil-deploy.timer
+
+systemctl daemon-reload
+systemctl enable --now mathpencil-deploy.timer
 ```
 
-Verify before relying on it:
+Force an immediate run rather than waiting for the timer:
 
 ```bash
-ssh -i ~/.ssh/mathpencil_deploy DEPLOY_USER@2.25.131.201 'echo ok'
+systemctl start mathpencil-deploy.service
+journalctl -u mathpencil-deploy.service -f
 ```
 
-## Passwordless sudo
-
-Only needed if the `USERNAME` secret is **not** `root`. Root already has this;
-adding a sudoers entry for it is a no-op.
-
-`deploy.sh` calls `sudo` for `mkdir`, `rsync` and `chown`. A non-interactive SSH
-session cannot answer a password prompt, so grant exactly those commands.
-
-`rsync` is not installed by default on a minimal Ubuntu image — check first, and
-confirm the real binary paths, because sudoers matches the literal path and a
-`/bin` vs `/usr/bin` mismatch silently fails to grant:
+Check the schedule:
 
 ```bash
-command -v mkdir rsync chown
-apt install -y rsync   # if missing
+systemctl list-timers mathpencil-deploy.timer
 ```
 
-Then `visudo -f /etc/sudoers.d/mathpencil-deploy`, substituting the deploy
-username for `DEPLOY_USER` and the paths from `command -v` above:
+`Type=oneshot` means systemd will not start a second run while one is in
+flight, so a slow build cannot overlap itself.
 
-```
-DEPLOY_USER ALL=(root) NOPASSWD: /usr/bin/mkdir, /usr/bin/rsync, /usr/bin/chown
-```
+## Decommissioning the old SSH path
 
-Pasting that line verbatim is a syntax error — `DEPLOY_USER` is a placeholder.
+Once the timer is confirmed working, the deploy secrets are dead weight and
+should go — they are standing inbound credentials with no remaining use:
 
 ```bash
-chmod 0440 /etc/sudoers.d/mathpencil-deploy
-visudo -c   # validate the whole sudoers tree
+gh secret delete HOST
+gh secret delete PORT
+gh secret delete USERNAME
+gh secret delete SSHKEY
 ```
 
-Verify non-interactively, the way CI will run it:
+And on the server, drop the CI key from `authorized_keys`:
 
 ```bash
-sudo -u DEPLOY_USER sudo -n rsync --version >/dev/null && echo ok
+grep -v "github-actions-mathpencil" /root/.ssh/authorized_keys > /tmp/ak && \
+  mv /tmp/ak /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+rm -f /root/.ssh/gha_deploy /root/.ssh/gha_deploy.pub
 ```
 
-If that prompts instead of printing `ok`, the deploy will hang until the 10
-minute `command_timeout`.
+Keep your own personal key in `authorized_keys` — verify you can still log in
+from a second terminal **before** closing the one you are in.
 
 ## nginx
 
-The 500 came from nginx, not the app: nothing had ever been published to the
-webroot, so `try_files` fell through to a missing `index.html` and looped.
-Inspect the live vhost first:
+The vhost lives in `/etc/nginx/sites-available/`. Inspect the live config with:
 
 ```bash
-sudo nginx -T | grep -A30 'server_name mathpencil.com'
+nginx -T | grep -A30 'server_name mathpencil.com'
 ```
 
-Keep the existing `listen 443` and certbot `ssl_certificate` lines — TLS on this
-host already works. Only the `root` and `location /` blocks need to match:
+Keep the certbot-managed `listen 443` and `ssl_certificate` lines. The parts
+that matter for a pre-rendered site:
 
 ```nginx
 root /var/www/mathpencil;
@@ -147,18 +135,40 @@ location ~* \.html$ {
 }
 ```
 
+`try_files $uri /index.html` is **not** sufficient — it never resolves
+`/contact/index.html`, and when `index.html` is absent it produces an internal
+redirect cycle that nginx reports as a 500.
+
 Apply:
 
 ```bash
-sudo nginx -t && sudo systemctl reload nginx
+nginx -t && systemctl reload nginx
 ```
 
-## Verifying a deploy
+## Verifying
 
 ```bash
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com
-curl -sS https://mathpencil.com | grep -o '<title>[^<]*</title>'
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com/contact
+curl -sS https://mathpencil.com | grep -o '<title>[^<]*</title>'
 ```
 
-All three should return `200` and the real page title.
+Both should be `200`. The webroot should contain `index.html`, `contact/` and
+`assets/` — if you see `client/` and `server/` in there, something copied
+`build/` instead of `build/client/`.
+
+## Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| 403 on `/` | Webroot exists but has no `index.html` — deploy never completed |
+| 500 on every path | `try_files` redirect cycle, usually a missing `index.html` |
+| 404 on `/contact` only | `try_files` missing the `$uri/index.html` branch |
+| Timer runs, nothing changes | Already at `origin/main`; check `git log -1` on the box |
+| `npm: command not found` | nvm not sourced — the service sets `NVM_DIR=/root/.nvm` |
+
+Logs for the last few deploys:
+
+```bash
+journalctl -u mathpencil-deploy.service --since "1 hour ago"
+```
