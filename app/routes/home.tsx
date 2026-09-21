@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import { AddingMachine } from "../components/AddingMachine";
-import { FAQ, MachineNotes } from "../components/MachineNotes";
+import { MachineNotes } from "../components/MachineNotes";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
@@ -48,14 +48,6 @@ export function meta({}: Route.MetaArgs) {
             isAccessibleForFree: true,
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             publisher: { "@type": "Organization", name: "HTPdevs", url: "https://htpdevs.tech" },
-          },
-          {
-            "@type": "FAQPage",
-            mainEntity: FAQ.map((entry) => ({
-              "@type": "Question",
-              name: entry.question,
-              acceptedAnswer: { "@type": "Answer", text: entry.answer },
-            })),
           },
         ],
       },
