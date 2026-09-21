@@ -1,4 +1,5 @@
 import type { Route } from "./+types/contact";
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
@@ -58,12 +59,14 @@ export default function Contact() {
 
           <a
             href="/"
-            className="mt-7 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[0.85rem] font-bold uppercase tracking-[0.2em] text-white no-underline shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
+            className="mt-7 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[1.2rem] font-bold uppercase tracking-[0.16em] text-white no-underline shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
           >
             Back to the calculator
           </a>
         </section>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -28,10 +28,15 @@ app/
 ├── routes.ts                   # / and /contact
 ├── app.css                     # theme tokens, fonts, the two animations
 ├── routes/
-│   ├── home.tsx                # the machine on its desk
-│   └── contact.tsx
+│   ├── home.tsx                # the machine on its desk, then the notes
+│   ├── contact.tsx
+│   ├── privacy.tsx             # privacy policy
+│   └── terms.tsx               # terms of use
 ├── components/
 │   ├── SiteHeader.tsx          # masthead; nav links live in NAV_LINKS
+│   ├── SiteFooter.tsx          # legal bar; links live in FOOTER_LINKS
+│   ├── PaperSheet.tsx          # a sheet of paper on the desk, for prose
+│   ├── MachineNotes.tsx        # what it is for, how to use it, how it works, FAQ
 │   ├── AddingMachine.tsx       # assembles the machine, owns the keyboard
 │   ├── Tape.tsx                # the paper; newest line at the platen
 │   ├── Keypad.tsx              # the machine face
@@ -91,11 +96,35 @@ and leaves `0.2` at the platen; `=` then totals `5`. After `+` or `-` it reads
 as a percentage *of* the running total, which is what the key does on a
 physical machine: `200 + 10 %` is ten percent of two hundred.
 
+## The written pages
+
+Everything below the machine on the home page — what it is for, how to work it,
+what the awkward keys do, how the two engines differ, and the FAQ — lives in
+`MachineNotes.tsx`. It sits below the fold on purpose: the One-Fold Rule is
+about what is needed to get an answer, and none of it is. The FAQ array is
+exported and fed straight into the page's `FAQPage` structured data, so the
+markup a crawler reads can never drift from the text a visitor reads.
+
+`/privacy` and `/terms` are plain prerendered pages on the same paper. Both
+carry an `EFFECTIVE` constant at the top; change the text, change the date.
+
 ## Ads
 
 The AdSense loader sits in the document head in `app/root.tsx`, keyed by
 `ADSENSE_CLIENT`. No `<ins class="adsbygoogle">` slots are placed — auto ads
 inject themselves if they are switched on in the AdSense dashboard.
+
+Two things are configured in the AdSense dashboard rather than in this repo,
+and the privacy policy assumes both are on:
+
+- **A consent message for the EEA, the UK and Switzerland.** AdSense →
+  Privacy & messaging → GDPR. Google requires a certified CMP for traffic from
+  those regions, and `/privacy` states that visitors there are asked for
+  consent. No code change is needed; it ships with the ad tag.
+- **A US states message**, if you want the CCPA opt-out surfaced in-page.
+
+`ads.txt` at the repo root is served at `/ads.txt` and must keep matching the
+publisher ID in `ADSENSE_CLIENT`.
 
 ## Deploying
 

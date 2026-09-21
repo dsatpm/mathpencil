@@ -101,7 +101,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <p className="mt-3 font-sans text-[1rem] text-ink">{details}</p>
         <a
           href="/"
-          className="mt-5 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[0.85rem] font-bold uppercase tracking-[0.2em] text-white shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
+          className="mt-5 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[1.2rem] font-bold uppercase tracking-[0.16em] text-white shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
         >
           Back to the calculator
         </a>
