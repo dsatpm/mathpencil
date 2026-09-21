@@ -32,8 +32,13 @@ export const links: Route.LinksFunction = () => [
     type: "font/woff2",
     crossOrigin: "anonymous",
   },
-  // No icon links: `public/favicon.ico` sits at the site root, which is the one
-  // place every browser looks without being told.
+  // Declared rather than left to the implicit /favicon.ico convention. The
+  // implicit lookup only fires when the document is at the root scope, and a
+  // browser that cached a failed fetch has no link to revalidate against — the
+  // site served 403 for long enough that most visitors have one cached.
+  // `sizes: "any"` tells the browser the .ico carries several resolutions
+  // (48x48 and 32x32) so it stops at this one rather than hunting for an SVG.
+  { rel: "icon", href: "/favicon.ico", sizes: "any" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
