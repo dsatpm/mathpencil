@@ -6,6 +6,7 @@ import { NavLink } from "react-router";
  */
 const NAV_LINKS: Array<{ to: string; label: string }> = [
   { to: "/scientific", label: "Scientific" },
+  { to: "/pre-algebra", label: "Pre-algebra" },
   { to: "/contact", label: "Contact" },
 ];
 

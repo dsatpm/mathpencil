@@ -89,6 +89,35 @@
   /* A fault in the window, which is not the tape's ribbon red. */
   --color-sci-fault: #c4522f;
 
+  /* ---------------------------------------------------------------------
+     The exercise book.
+
+     The third thing on the desk is not a machine at all: it is a page of
+     lessons. So it takes the colours of the squared exercise book the work
+     would have been done in — cool grid paper instead of warm tape, biro blue
+     instead of impact black, and a teacher's red for the answer. The worked
+     solver is a chalkboard, because a worked step belongs on a board, not in
+     a window.
+  --------------------------------------------------------------------- */
+
+  --color-pa-ground: #e7edf3;
+  --color-pa-paper: #f2f6fa;
+  --color-pa-paper-edge: #d8e2ec;
+  --color-pa-grid: #cfdded;
+  --color-pa-ink: #1b2a41;
+  --color-pa-ink-soft: #55657c;
+  --color-pa-biro: #2b52c4;
+  --color-pa-biro-deep: #1d3a92;
+  --color-pa-mark: #c33a46;
+  --color-pa-note: #f7e6b0;
+
+  /* The board the working is shown on. */
+  --color-pa-board: #1f3b35;
+  --color-pa-board-edge: #2f544c;
+  --color-pa-chalk: #eaf1e8;
+  --color-pa-chalk-soft: #a3bba2;
+  --color-pa-chalk-mark: #f0c96a;
+
   --font-mono: "Sometype Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, sans-serif;
 
@@ -141,6 +170,60 @@ body {
    acting key rather than the adding machine's orange. */
 .on-instrument :focus-visible {
   outline-color: var(--color-sci-act);
+}
+
+/* On grid paper the ring is drawn in the same biro the page is written in. */
+.on-grid :focus-visible {
+  outline-color: var(--color-pa-biro);
+}
+
+/* On the board it is chalk, because nothing else on a board is visible. */
+.on-board :focus-visible {
+  outline-color: var(--color-pa-chalk-mark);
+}
+
+/* A line of chalk drawn through a section of the contents once it is behind
+   you. The stroke is uneven along its length and very slightly off horizontal,
+   because a line drawn by hand on a board is both, and a perfectly level 2px
+   rule would read as a strikethrough in a text editor rather than as chalk. */
+.chalk-strike {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(234, 241, 232, 0.95) 0 7px,
+    rgba(234, 241, 232, 0.35) 7px 10px,
+    rgba(234, 241, 232, 0.8) 10px 17px,
+    rgba(234, 241, 232, 0.5) 17px 21px
+  );
+  background-repeat: no-repeat;
+  background-position: 0 0.62em;
+  background-size: 0% 2px;
+  transition: background-size 420ms cubic-bezier(0.22, 0.8, 0.3, 1);
+  /* The line is painted on the text itself rather than laid over it, so a
+     title that wraps gets struck on both of its lines — which an overlay at a
+     fixed height cannot do. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.chalk-strike[data-struck="true"] {
+  background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The line still appears — it is information, not decoration — it just does
+     not travel to get there. */
+  .chalk-strike {
+    transition: none;
+  }
+}
+
+/* Squared paper. One rule of the exercise book drawn at a real size, so the
+   page reads as paper that was ruled before anything was written on it. */
+.grid-paper {
+  background-image:
+    linear-gradient(to right, var(--color-pa-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-pa-grid) 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem;
 }
 
 * {
