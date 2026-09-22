@@ -230,7 +230,7 @@ export function SciKeypad({ dispatch, shift, angleMode, memoryHeld }: SciKeypadP
         <SciKey
           variant="chiclet"
           onPress={() => dispatch({ type: "toggleShift" })}
-          label="Shift — reach the gold labels"
+          label="Shift, for the gold labels"
           hint="Reaches the gold label above each key, for one press."
           lit={shift}
         >
@@ -300,7 +300,7 @@ export function SciKeypad({ dispatch, shift, angleMode, memoryHeld }: SciKeypadP
           variant="function"
           onPress={() => dispatch({ type: "backspace" })}
           label="Backspace"
-          hint="Rubs out the last key press, whole — sin( comes off in one."
+          hint="Rubs out the last key press, whole, so sin( comes off in one."
         >
           <BackspaceMark />
         </SciKey>

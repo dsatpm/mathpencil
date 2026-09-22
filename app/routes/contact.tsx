@@ -3,7 +3,7 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
-const TITLE = "Contact — MathPencil";
+const TITLE = "Contact | MathPencil";
 const DESCRIPTION = "How to reach the people who build MathPencil.";
 
 export function meta({}: Route.MetaArgs) {
