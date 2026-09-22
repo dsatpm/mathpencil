@@ -1,10 +1,11 @@
 import type { Route } from "./+types/privacy";
 import { PaperSheet } from "../components/PaperSheet";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
-const TITLE = "Privacy policy — MathPencil";
+const TITLE = "Privacy policy | MathPencil";
 const DESCRIPTION =
   "What MathPencil does and does not collect: calculations stay in your browser, the site sets no cookies of its own, and Google AdSense serves the advertising.";
 
@@ -76,15 +77,15 @@ export default function Privacy() {
             Both the keypad and the paste field are arithmetic running locally in your browser. The
             figures you key, the sums you paste and the tape they print are held in the page's memory
             for as long as the tab is open, and are discarded when you close or reload it. They are
-            not transmitted to us, not written to your device, and not shared with anyone —
+            not transmitted to us, not written to your device, and not shared with anyone,
             including advertisers.
           </p>
 
           <h2 className={HEADING}>Cookies and local storage</h2>
           <p className={BODY}>
             MathPencil itself sets no cookies and writes nothing to local storage. Cookies you may
-            find from this site come from Google's advertising, described next, or — in the European
-            Economic Area, the United Kingdom and Switzerland — from the consent notice that records
+            find from this site come from Google's advertising, described next, or, in the European
+            Economic Area, the United Kingdom and Switzerland, from the consent notice that records
             the choice you made.
           </p>
 
@@ -151,7 +152,7 @@ export default function Privacy() {
 
           <h2 className={HEADING}>Server logs</h2>
           <p className={BODY}>
-            The web server that delivers the page keeps ordinary access logs — the IP address the
+            The web server that delivers the page keeps ordinary access logs: the IP address the
             request came from, the time, the page requested, the browser's user-agent string, and any
             errors. These are the standard records a web server keeps to stay secure and to diagnose
             faults. They are not used to build a profile of you, are not combined with anything else,
@@ -192,6 +193,7 @@ export default function Privacy() {
         </PaperSheet>
       </main>
 
+      <ScrollToTop />
       <SiteFooter />
     </div>
   );
