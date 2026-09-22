@@ -1,0 +1,326 @@
+{
+  "title": "Pre-Algebra for a Junior High Student",
+  "level": "Beginner",
+  "audience": "Junior high student taking pre-algebra for the first time",
+  "definition": {
+    "what_is_pre_algebra": "Pre-algebra is the math class that helps you move from basic arithmetic into algebra.",
+    "main_idea": "You begin using letters called variables to represent numbers you do not know yet.",
+    "example": {
+      "arithmetic": "7 + 5 = 12",
+      "pre_algebra": "x + 5 = 12",
+      "solution": "x = 7"
+    },
+    "progression": ["Arithmetic", "Pre-Algebra", "Algebra"]
+  },
+  "topics": [
+    {
+      "topic": "Number Theory",
+      "description": "Number theory is about understanding different types of numbers and how they behave.",
+      "concepts": {
+        "positive_numbers": ["1", "2", "3", "4", "5"],
+        "negative_numbers": ["-1", "-2", "-3", "-4", "-5"],
+        "zero": "0",
+        "even_numbers": ["2", "4", "6", "8", "10"],
+        "odd_numbers": ["1", "3", "5", "7", "9"],
+        "prime_numbers": ["2", "3", "5", "7", "11", "13"]
+      },
+      "example": {
+        "comparison": "3 > -2",
+        "meaning": "3 is greater than negative 2."
+      }
+    },
+    {
+      "topic": "Factors and Multiples",
+      "description": "Factors are numbers that multiply together to create another number. Multiples are the results you get when multiplying a number by whole numbers.",
+      "factor_example": {
+        "equation": "3 × 4 = 12",
+        "factors_of_12": [1, 2, 3, 4, 6, 12]
+      },
+      "multiple_example": {
+        "number": 4,
+        "multiples": [4, 8, 12, 16, 20, 24]
+      },
+      "greatest_common_factor_example": {
+        "numbers": [12, 18],
+        "factors_of_12": [1, 2, 3, 4, 6, 12],
+        "factors_of_18": [1, 2, 3, 6, 9, 18],
+        "gcf": 6
+      }
+    },
+    {
+      "topic": "Fractions, Decimals, and Percents",
+      "description": "Fractions, decimals, and percents are different ways of showing part of a whole.",
+      "equivalents": [
+        {
+          "fraction": "1/2",
+          "decimal": 0.5,
+          "percent": "50%"
+        },
+        {
+          "fraction": "1/4",
+          "decimal": 0.25,
+          "percent": "25%"
+        },
+        {
+          "fraction": "3/4",
+          "decimal": 0.75,
+          "percent": "75%"
+        }
+      ],
+      "addition_example": {
+        "equation": "1/4 + 2/4 = 3/4",
+        "explanation": "When the denominators are the same, add the numerators."
+      }
+    },
+    {
+      "topic": "Ratios and Proportions",
+      "description": "A ratio compares two quantities. A proportion says that two ratios are equal.",
+      "ratio_example": {
+        "boys": 10,
+        "girls": 15,
+        "ratio": "10:15",
+        "simplified_ratio": "2:3"
+      },
+      "proportion_example": {
+        "equation": "1/2 = 2/4",
+        "meaning": "Both fractions represent the same amount."
+      },
+      "word_problem": {
+        "question": "If 3 notebooks cost $6, how much do 6 notebooks cost?",
+        "answer": "$12"
+      }
+    },
+    {
+      "topic": "Expressions, Variables, and Equations",
+      "description": "Variables are letters that represent numbers. Expressions contain numbers, variables, and operations. Equations contain an equals sign.",
+      "variable_examples": ["x", "y", "n"],
+      "expression_examples": ["x + 5", "3y", "2x + 7"],
+      "equation_example": {
+        "equation": "x + 5 = 12",
+        "steps": ["Subtract 5 from both sides.", "x = 12 - 5", "x = 7"],
+        "answer": "x = 7"
+      },
+      "important_rule": "Whatever you do to one side of an equation, you must also do to the other side."
+    },
+    {
+      "topic": "Exponents and Square Roots",
+      "description": "An exponent tells you how many times to multiply a number by itself. A square root asks what number multiplied by itself creates another number.",
+      "exponent_examples": [
+        {
+          "expression": "5^2",
+          "expanded": "5 × 5",
+          "answer": 25
+        },
+        {
+          "expression": "2^3",
+          "expanded": "2 × 2 × 2",
+          "answer": 8
+        }
+      ],
+      "square_root_example": {
+        "expression": "√36",
+        "reasoning": "6 × 6 = 36",
+        "answer": 6
+      }
+    },
+    {
+      "topic": "Geometry and Measurement",
+      "description": "Pre-algebra introduces formulas for finding things like area, perimeter, and missing sides.",
+      "rectangle_area": {
+        "formula": "A = l × w",
+        "length": 8,
+        "width": 5,
+        "calculation": "8 × 5",
+        "answer": 40
+      },
+      "rectangle_perimeter": {
+        "formula": "P = 2l + 2w",
+        "length": 8,
+        "width": 5,
+        "calculation": "2(8) + 2(5)",
+        "answer": 26
+      },
+      "triangle_area": {
+        "formula": "A = (1/2)bh",
+        "base": 10,
+        "height": 6,
+        "calculation": "(1/2)(10)(6)",
+        "answer": 30
+      }
+    }
+  ],
+  "formulas": [
+    {
+      "name": "Speed",
+      "formula": "s = d / t",
+      "variables": {
+        "s": "speed",
+        "d": "distance",
+        "t": "time"
+      },
+      "example": {
+        "distance": "150 miles",
+        "time": "3 hours",
+        "calculation": "150 / 3",
+        "answer": "50 mph"
+      }
+    },
+    {
+      "name": "Distance",
+      "formula": "d = s × t",
+      "variables": {
+        "d": "distance",
+        "s": "speed",
+        "t": "time"
+      },
+      "example": {
+        "speed": "60 mph",
+        "time": "4 hours",
+        "calculation": "60 × 4",
+        "answer": "240 miles"
+      }
+    },
+    {
+      "name": "Percent",
+      "formula": "Part = Percent × Whole",
+      "example": {
+        "question": "What is 20% of 80?",
+        "decimal_percent": 0.2,
+        "calculation": "0.20 × 80",
+        "answer": 16
+      }
+    },
+    {
+      "name": "Rectangle Area",
+      "formula": "A = l × w"
+    },
+    {
+      "name": "Rectangle Perimeter",
+      "formula": "P = 2l + 2w"
+    },
+    {
+      "name": "Triangle Area",
+      "formula": "A = (1/2)bh"
+    },
+    {
+      "name": "Pythagorean Theorem",
+      "formula": "a^2 + b^2 = c^2",
+      "variables": {
+        "a": "one shorter side",
+        "b": "the other shorter side",
+        "c": "the hypotenuse"
+      },
+      "example": {
+        "a": 3,
+        "b": 4,
+        "steps": [
+          "3^2 + 4^2 = c^2",
+          "9 + 16 = c^2",
+          "25 = c^2",
+          "c = √25",
+          "c = 5"
+        ],
+        "answer": 5
+      }
+    }
+  ],
+  "pre_algebra_vs_algebra": {
+    "pre_algebra": {
+      "description": "Pre-algebra teaches the basic rules and skills needed before algebra.",
+      "examples": ["x + 4 = 10", "3x = 15"]
+    },
+    "algebra": {
+      "description": "Algebra uses the same ideas in more complicated equations.",
+      "examples": ["3x + 7 = 22", "4(x + 2) - 3 = 17"]
+    },
+    "main_difference": "Pre-algebra introduces variables, equations, formulas, and number rules. Algebra uses those skills to solve more complicated problems."
+  },
+  "practice_examples": {
+    "substitution": [
+      {
+        "given": "x = 6",
+        "expression": "x + 4",
+        "substitution": "6 + 4",
+        "answer": 10
+      },
+      {
+        "given": "y = 4",
+        "expression": "3y + 2",
+        "substitution": "3(4) + 2",
+        "steps": ["12 + 2", "14"],
+        "answer": 14
+      }
+    ],
+    "evaluating_expressions": [
+      {
+        "given": "x = 3",
+        "expression": "2x + 5",
+        "substitution": "2(3) + 5",
+        "steps": ["6 + 5", "11"],
+        "answer": 11
+      }
+    ],
+    "simple_equations": [
+      {
+        "equation": "x + 8 = 15",
+        "operation": "Subtract 8 from both sides",
+        "answer": "x = 7"
+      },
+      {
+        "equation": "x - 5 = 9",
+        "operation": "Add 5 to both sides",
+        "answer": "x = 14"
+      },
+      {
+        "equation": "4x = 20",
+        "operation": "Divide both sides by 4",
+        "answer": "x = 5"
+      }
+    ],
+    "two_step_equations": [
+      {
+        "equation": "2x + 5 = 17",
+        "steps": [
+          "Subtract 5 from both sides: 2x = 12",
+          "Divide both sides by 2: x = 6"
+        ],
+        "answer": "x = 6"
+      },
+      {
+        "equation": "3x - 4 = 11",
+        "steps": [
+          "Add 4 to both sides: 3x = 15",
+          "Divide both sides by 3: x = 5"
+        ],
+        "answer": "x = 5"
+      }
+    ],
+    "hypotenuse": [
+      {
+        "question": "A right triangle has sides 6 and 8. Find the hypotenuse.",
+        "formula": "a^2 + b^2 = c^2",
+        "steps": [
+          "6^2 + 8^2 = c^2",
+          "36 + 64 = c^2",
+          "100 = c^2",
+          "c = √100",
+          "c = 10"
+        ],
+        "answer": 10
+      }
+    ]
+  },
+  "key_vocabulary": {
+    "variable": "A letter that represents a number.",
+    "expression": "A math statement with numbers, variables, and operations but no equals sign.",
+    "equation": "A math statement showing that two expressions are equal.",
+    "coefficient": "A number multiplied by a variable, such as 3 in 3x.",
+    "constant": "A number without a variable, such as 5 in 2x + 5.",
+    "factor": "A number that divides evenly into another number.",
+    "multiple": "The result of multiplying a number by a whole number.",
+    "exponent": "A number that tells how many times the base is multiplied by itself.",
+    "square_root": "A number that, when multiplied by itself, gives the original number.",
+    "hypotenuse": "The longest side of a right triangle."
+  },
+  "main_takeaway": "Pre-algebra is mostly about learning how numbers, variables, equations, and formulas work together. If you understand substitution, order of operations, fractions, negative numbers, and how to solve simple equations, you will have a strong foundation for algebra."
+}
