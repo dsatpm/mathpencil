@@ -153,7 +153,7 @@ export function ScientificNotes() {
           >
             HTPdevs
           </a>
-          . If you came for a running total rather than a formula, the{" "}
+          . For a running total rather than a formula, the{" "}
           <a
             href="/"
             className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"

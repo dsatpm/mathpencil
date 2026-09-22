@@ -131,8 +131,8 @@ export default function PreAlgebra() {
                 <p className={BODY}>
                   In arithmetic, you are given all the numbers and you work out the answer. In
                   pre-algebra, one of the numbers is missing, and a letter stands in its place until
-                  you find it. Everything else stays the same. The rules you already use on numbers
-                  still work.
+                  it is found. Everything else stays the same, because the rules that apply to
+                  numbers apply to the letter standing in for one.
                 </p>
 
                 <div className="mt-5 bg-pa-note/45 px-4 py-4">
@@ -168,14 +168,14 @@ export default function PreAlgebra() {
                 </div>
 
                 <p className={BODY}>
-                  You already do this in your head. If 7 plus something is 12, the something is 5.
-                  Pre-algebra turns that into a method that still works when the numbers are too big
-                  to guess, and the method is one rule: whatever you do to one side of an equation,
-                  do the same thing to the other side.
+                  If 7 plus something is 12, the something is 5. Pre-algebra turns that reasoning
+                  into a method that still works when the numbers are too big to arrive at by
+                  inspection, and the method is one rule: whatever is done to one side of an
+                  equation is done to the other side as well.
                 </p>
                 <p className={BODY}>
-                  It is usually taught in grades 6 to 8, but these are also the first topics any
-                  adult going back to math needs. Nothing here assumes you remember them already.
+                  It is usually taught in grades 6 to 8. The same topics are the ones covered first
+                  when returning to math later on.
                 </p>
               </Lesson>
 
@@ -306,9 +306,9 @@ export default function PreAlgebra() {
 
               <Lesson id="formulas" title="Formulas to know">
                 <p className={BODY}>
-                  A few of these are worth knowing by heart, because they come up all the time. The
-                  rest are worth understanding. If you know that profit is what is left after the
-                  cost comes off, you can write the formula down whenever you need it.
+                  A few of these come up constantly and are usually memorised. The rest follow from
+                  what they describe: profit is what is left after the cost comes off, which is the
+                  formula itself stated in words.
                 </p>
 
                 {FORMULA_GROUPS.map((group) => (
@@ -363,8 +363,8 @@ export default function PreAlgebra() {
 
               <Lesson id="key-words" title="Key words">
                 <p className={BODY}>
-                  Most of the trouble in pre-algebra is words, not numbers. A question is hard to
-                  answer if you are not sure what it is asking for. These ten come up constantly.
+                  Much of pre-algebra is vocabulary. A question names what it wants in these terms,
+                  and the term decides which arithmetic answers it. These ten come up constantly.
                 </p>
 
                 <dl className="mt-5 divide-y divide-pa-ink/12 border-t border-pa-ink/12">
@@ -383,8 +383,8 @@ export default function PreAlgebra() {
 
               <Lesson id="examples" title="Worked examples">
                 <p className={BODY}>
-                  Each one is written the way you should write it on paper: the question, the steps
-                  in order, then the answer. The steps are the part that gets graded.
+                  Each one is set out the way a solution is written on paper: the question, the
+                  steps in order, then the answer.
                 </p>
 
                 <div className="mt-5 space-y-4">
@@ -430,7 +430,7 @@ export default function PreAlgebra() {
                   to write it.
                 </p>
                 <p className={BODY}>
-                  Use it to check your own work rather than to replace it. Anything past one letter,
+                  It is built for checking work rather than replacing it. Anything past one letter,
                   such as a letter squared, a letter on the bottom of a fraction, or two different
                   letters, is turned down with a sentence saying why, because that is algebra and
                   this is not the page for it. For roots, powers and trigonometry there is the{" "}

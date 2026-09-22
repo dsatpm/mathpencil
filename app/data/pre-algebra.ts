@@ -460,7 +460,7 @@ export const PRE_ALGEBRA_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: "What grade is pre-algebra for?",
     answer:
-      "Usually grades 6 to 8, around ages 11 to 14. The topics are also the first ones any adult going back to math needs, and nothing on this page assumes you remember them already.",
+      "Usually grades 6 to 8, around ages 11 to 14. These are also the first topics covered when returning to math later on.",
   },
   {
     question: "What is the one rule I should remember?",
@@ -470,11 +470,11 @@ export const PRE_ALGEBRA_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: "Do I have to memorize every formula?",
     answer:
-      "No. A few are worth knowing by heart because they come up all the time: speed = distance ÷ time, area of a rectangle, percent of a number, and a² + b² = c². The rest are worth understanding, because then you can write them down when you need them.",
+      "No. A few come up constantly and are usually memorised: speed = distance ÷ time, area of a rectangle, percent of a number, and a² + b² = c². The rest follow from what they describe, so they can be rebuilt rather than recalled.",
   },
   {
     question: "What does the solver on this page do?",
     answer:
-      "It solves an equation with one letter in it and shows every step it took, and it works out an expression once you give the letter a value. Use it to check your own work. The steps are the part that gets graded, so copying only the last line does not help you.",
+      "It solves an equation with one letter in it and prints every step it took, and it works out an expression once the letter has a value. The steps are printed in the order a written solution sets them out in, so the working can be compared line by line.",
   },
 ];

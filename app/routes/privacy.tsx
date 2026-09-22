@@ -55,9 +55,8 @@ export default function Privacy() {
             <a href="/" className={LINK}>
               mathpencil.com
             </a>{" "}
-            by HTPdevs. This policy explains what happens to information when you use it. It is
-            written to be read rather than to be survived, so it says plainly what is collected,
-            what is not, and who else is involved.
+            by HTPdevs. This policy explains what happens to information when the site is used. It
+            states what is collected, what is not, and who else is involved.
           </p>
 
           <h2 className={HEADING}>The short version</h2>

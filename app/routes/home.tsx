@@ -8,7 +8,7 @@ import { absoluteUrl, SITE_NAME } from "../lib/site";
 
 const TITLE = "MathPencil: a simple calculator for quick calculations";
 const DESCRIPTION =
-  "A calculator that prints its working to a tape, plus a field for pasting a sum you already have written down. Works with a mouse, a keyboard, or a number pad.";
+  "A calculator that prints its working to a tape, plus a field for pasting a sum that is already written down. Works with a mouse, a keyboard, or a number pad.";
 
 export function meta({}: Route.MetaArgs) {
   return [

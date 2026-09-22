@@ -63,9 +63,9 @@ export function MachineNotes() {
         </p>
 
         <p className="mt-3 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
-          If you have ever finished a running
-          total on a phone calculator and had to start over because you could not remember whether
-          you had already added the third figure, this will solve that problem.
+          On a phone calculator a running total is one figure with no record behind it, so a lost
+          place means keying the column again. Here every entry stays printed on the tape, and the
+          figure already added is still on screen.
         </p>
 
         <p className="mt-3 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
@@ -97,7 +97,7 @@ export function MachineNotes() {
         </p>
 
         <h3 className="mt-5 font-sans text-[1.05rem] font-bold text-ink">
-          Solving a sum you already have written down
+          Solving a sum that is already written down
         </h3>
         <p className="mt-2 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
           Under the calculator, the <span className="font-semibold text-ink">Paste a sum</span> box is where
