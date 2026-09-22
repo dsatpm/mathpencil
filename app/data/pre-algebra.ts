@@ -1,17 +1,20 @@
 /**
  * Everything the pre-algebra page says, kept as data.
  *
- * The page is a lesson rather than an instrument, so its content is the thing
- * most likely to change — a topic added, a formula reworded, an example
- * replaced. Holding it here means those edits are one line in a list rather
- * than a change to a layout, and the contents list down the left gutter is
- * generated from the same objects the page renders, so the two can never
+ * The wording comes from `pre-algebra.json`, which sets the reading level: a
+ * junior high student taking pre-algebra for the first time. Sentences are
+ * short, the words are everyday words, and every idea is shown with a number
+ * rather than only described.
+ *
+ * Holding the content here means adding a topic or fixing a formula is one line
+ * in a list rather than a change to a layout, and the contents list in the left
+ * gutter is built from the same objects the page renders, so the two can never
  * disagree about what is on the page.
  */
 
 /** A section of the page, and the entry it gets in the contents list. */
 export interface PageSection {
-  /** The `id` the heading carries, and the anchor the contents list points at. */
+  /** The `id` the section carries, and the anchor the contents list points at. */
   id: string;
   /** The words in the contents list, which are also the heading. */
   title: string;
@@ -21,11 +24,23 @@ export const SECTIONS: PageSection[] = [
   { id: "what-is-pre-algebra", title: "What is pre-algebra?" },
   { id: "how-it-differs", title: "Pre-algebra, algebra and algebra 2" },
   { id: "topics", title: "Pre-algebra topics" },
-  { id: "formulas", title: "Formulas worth knowing" },
+  { id: "formulas", title: "Formulas to know" },
+  { id: "key-words", title: "Key words" },
   { id: "examples", title: "Worked examples" },
   { id: "solver", title: "Work an equation out" },
   { id: "questions", title: "Common questions" },
 ];
+
+/** The one line the page is built around, shown near the top. */
+export const MAIN_IDEA = {
+  arithmetic: "7 + 5 = 12",
+  preAlgebra: "x + 5 = 12",
+  solution: "x = 7",
+};
+
+/** What the course leaves you with, printed at the end of the lesson. */
+export const MAIN_TAKEAWAY =
+  "Pre-algebra is mostly about learning how numbers, variables, equations and formulas work together. If you understand substitution, order of operations, fractions, negative numbers and how to solve simple equations, you have a strong start for algebra.";
 
 /** One row of the comparison between the three courses. */
 export interface CourseRow {
@@ -37,48 +52,50 @@ export interface CourseRow {
 
 export const COURSE_ROWS: CourseRow[] = [
   {
-    aspect: "What you work with",
-    preAlgebra: "Numbers, with a letter standing in for one unknown.",
-    algebra: "Expressions and equations as objects in their own right.",
-    algebraTwo: "Whole families of functions, and how they behave.",
+    aspect: "What it teaches",
+    preAlgebra: "The basic rules and skills you need before algebra.",
+    algebra: "The same ideas used in harder equations.",
+    algebraTwo: "Whole families of equations, and what their graphs look like.",
   },
   {
-    aspect: "A typical question",
-    preAlgebra: "Solve 3x + 5 = 20.",
-    algebra: "Factorise x² − 5x + 6, then solve it.",
-    algebraTwo: "Solve log₂(x + 3) = 5, or sketch y = 2ˣ⁻¹.",
+    aspect: "A question it asks",
+    preAlgebra: "Solve x + 4 = 10, or solve 3x = 15.",
+    algebra: "Solve 3x + 7 = 22, or solve 4(x + 2) − 3 = 17.",
+    algebraTwo: "Solve x² − 5x + 6 = 0, or draw the graph of y = 2ˣ.",
   },
   {
     aspect: "How many steps",
-    preAlgebra: "One or two: undo what was done to x.",
-    algebra: "Several, and you choose the method.",
-    algebraTwo: "Several methods combined, often with a graph attached.",
+    preAlgebra: "One or two. You undo what was done to the letter.",
+    algebra: "Several, and you pick the method.",
+    algebraTwo: "Several methods together, often with a graph as well.",
   },
   {
-    aspect: "What it is teaching",
-    preAlgebra: "That arithmetic has rules, and the rules hold when a number is missing.",
-    algebra: "That a relationship can be written down, rearranged and solved.",
-    algebraTwo: "That functions have shapes, and the shape predicts the answer.",
+    aspect: "Where the letter can be",
+    preAlgebra: "In one place, by itself.",
+    algebra: "In two or three places, sometimes inside brackets.",
+    algebraTwo: "Squared, under a root sign, or as a power.",
   },
   {
-    aspect: "Where it usually sits",
-    preAlgebra: "The bridge between arithmetic and algebra — often grades 6–8.",
-    algebra: "The first full algebra course, often grades 8–9.",
-    algebraTwo: "After geometry, often grades 10–11.",
+    aspect: "When you take it",
+    preAlgebra: "Usually grades 6 to 8.",
+    algebra: "Usually grades 8 to 9.",
+    algebraTwo: "Usually grades 10 to 11, after geometry.",
   },
 ];
 
 /** One topic taught in pre-algebra. */
 export interface Topic {
   name: string;
-  /** What the topic is, in a sentence a student would recognise. */
+  /** What the topic is, in one or two short sentences. */
   summary: string;
-  /** A question of the kind this topic asks. */
-  looksLike: string;
+  /** The facts the topic is made of, one short line each. */
+  points: string[];
+  /** A worked example, shown line by line the way it is written on paper. */
+  example: { label: string; lines: string[] };
 }
 
 /**
- * The topics, in roughly the order a course meets them.
+ * The topics, in the order the JSON lists them.
  *
  * Adding one is a single object; the contents list, the count in the
  * introduction and the page's structured data all follow from this array.
@@ -87,113 +104,124 @@ export const TOPICS: Topic[] = [
   {
     name: "Number theory",
     summary:
-      "What whole numbers are made of: primes and composites, divisibility rules, prime factorisation, square and cube numbers.",
-    looksLike: "Write 84 as a product of primes.",
+      "Number theory is about the different kinds of numbers and how they behave.",
+    points: [
+      "Positive numbers are above zero: 1, 2, 3, 4, 5.",
+      "Negative numbers are below zero: −1, −2, −3, −4, −5.",
+      "Zero is neither positive nor negative.",
+      "Even numbers divide by 2 with nothing left over: 2, 4, 6, 8, 10.",
+      "Odd numbers do not: 1, 3, 5, 7, 9.",
+      "Prime numbers have only two factors, 1 and themselves: 2, 3, 5, 7, 11, 13.",
+    ],
+    example: {
+      label: "Comparing two numbers",
+      lines: ["3 > −2", "3 is greater than negative 2."],
+    },
   },
   {
     name: "Factors and multiples",
     summary:
-      "Every number that divides a number, and every number it divides into — leading to the highest common factor and the lowest common multiple.",
-    looksLike: "Find the HCF of 24 and 36, and their LCM.",
+      "Factors are numbers that multiply together to make another number. Multiples are what you get when you multiply a number by whole numbers.",
+    points: [
+      "3 × 4 = 12, so 3 and 4 are both factors of 12.",
+      "All the factors of 12 are 1, 2, 3, 4, 6 and 12.",
+      "The multiples of 4 are 4, 8, 12, 16, 20, 24 and so on.",
+      "The greatest common factor is the biggest factor two numbers share.",
+    ],
+    example: {
+      label: "Greatest common factor of 12 and 18",
+      lines: [
+        "Factors of 12: 1, 2, 3, 4, 6, 12",
+        "Factors of 18: 1, 2, 3, 6, 9, 18",
+        "The biggest one in both lists is 6.",
+      ],
+    },
   },
   {
-    name: "Integers and negative numbers",
+    name: "Fractions, decimals and percents",
     summary:
-      "Numbers either side of zero, and the rules for adding, subtracting, multiplying and dividing them without losing the sign.",
-    looksLike: "Work out −7 − (−12).",
+      "Fractions, decimals and percents are three ways of showing part of a whole. The same amount can be written all three ways.",
+    points: [
+      "1/2 is the same as 0.5, which is the same as 50%.",
+      "1/4 is the same as 0.25, which is the same as 25%.",
+      "3/4 is the same as 0.75, which is the same as 75%.",
+      "When the bottom numbers match, add the top numbers.",
+    ],
+    example: {
+      label: "Adding fractions",
+      lines: ["1/4 + 2/4 = 3/4", "The bottom numbers are the same, so add the top numbers."],
+    },
   },
   {
-    name: "Fractions and decimals",
+    name: "Ratios and proportions",
     summary:
-      "Equivalent fractions, simplifying, the four operations on fractions, and the conversions between fractions, decimals and percentages.",
-    looksLike: "Add ⅝ and ⅓, then write the answer as a decimal.",
+      "A ratio compares two amounts. A proportion says that two ratios are equal.",
+    points: [
+      "A class with 10 boys and 15 girls has a ratio of 10:15.",
+      "That ratio simplifies to 2:3, the same way a fraction simplifies.",
+      "1/2 = 2/4 is a proportion, because both sides are the same amount.",
+    ],
+    example: {
+      label: "Word problem",
+      lines: ["If 3 notebooks cost $6, how much do 6 notebooks cost?", "$12"],
+    },
   },
   {
-    name: "Ratio and proportion",
+    name: "Expressions, variables and equations",
     summary:
-      "Comparing quantities, sharing an amount in a given ratio, and solving a proportion where one of the four numbers is missing.",
-    looksLike: "Share £60 between two people in the ratio 3 : 2.",
-  },
-  {
-    name: "Percentages",
-    summary:
-      "Percentage of an amount, percentage increase and decrease, and working backwards from a changed figure to the original.",
-    looksLike: "A coat is £48 after a 20% discount. What was it before?",
+      "A variable is a letter that stands for a number. An expression is numbers, variables and operations with no equals sign. An equation has an equals sign in it.",
+    points: [
+      "Variables are letters like x, y and n.",
+      "Expressions look like x + 5, or 3y, or 2x + 7. There is nothing to solve.",
+      "Equations look like x + 5 = 12. There is something to solve.",
+      "Whatever you do to one side of an equation, do to the other side too.",
+    ],
+    example: {
+      label: "Solving x + 5 = 12",
+      lines: ["Subtract 5 from both sides.", "x = 12 − 5", "x = 7"],
+    },
   },
   {
     name: "Exponents and square roots",
     summary:
-      "Powers as repeated multiplication, the index laws, square and cube roots, and standard form for very large or very small numbers.",
-    looksLike: "Simplify 2³ × 2⁴, then find √144.",
+      "An exponent tells you how many times to multiply a number by itself. A square root asks which number times itself makes the number you have.",
+    points: [
+      "5² means 5 × 5, which is 25.",
+      "2³ means 2 × 2 × 2, which is 8.",
+      "A square root undoes a square.",
+    ],
+    example: {
+      label: "Finding a square root",
+      lines: ["√36 = 6", "because 6 × 6 = 36."],
+    },
   },
   {
-    name: "Order of operations",
+    name: "Geometry and measurement",
     summary:
-      "The agreed order — brackets, indices, division and multiplication, then addition and subtraction — that makes one expression mean one thing.",
-    looksLike: "Work out 8 + 3 × (10 − 6)².",
-  },
-  {
-    name: "Variables and expressions",
-    summary:
-      "Letters standing for numbers, writing a situation as an expression, substituting a value, and collecting like terms.",
-    looksLike: "Evaluate 8(x + 3) when x = 2.",
-  },
-  {
-    name: "Linear equations",
-    summary:
-      "One unknown, and the balance rule: whatever is done to one side is done to the other until the letter stands alone.",
-    looksLike: "Solve 5x − 4 = 3x + 10.",
-  },
-  {
-    name: "Inequalities",
-    summary:
-      "The same balance rule with < and >, plus the one place it changes — multiplying or dividing by a negative turns the sign around.",
-    looksLike: "Solve −2x + 1 < 9 and show it on a number line.",
-  },
-  {
-    name: "The coordinate plane",
-    summary:
-      "Plotting points as ordered pairs, the four quadrants, and reading a straight line as a rule connecting x and y.",
-    looksLike: "Plot (−3, 2) and (1, −4), then find the distance across.",
-  },
-  {
-    name: "Perimeter, area and volume",
-    summary:
-      "The measurements of rectangles, triangles, circles and cuboids, and the units each one is counted in.",
-    looksLike: "Find the area of a triangle with base 10 cm and height 6 cm.",
-  },
-  {
-    name: "Measurement and units",
-    summary:
-      "Converting between units of length, mass, capacity and time, and keeping units consistent inside a calculation.",
-    looksLike: "Convert 2.5 hours into minutes, then into seconds.",
-  },
-  {
-    name: "Statistics and averages",
-    summary:
-      "Mean, median, mode and range, reading a table or chart, and knowing which average a question is actually asking for.",
-    looksLike: "Find the mean and the median of 4, 7, 7, 9, 13.",
-  },
-  {
-    name: "Probability",
-    summary:
-      "How likely something is, written as a fraction between 0 and 1, and the outcomes that make up a simple experiment.",
-    looksLike: "A bag holds 3 red and 5 blue counters. What is P(red)?",
-  },
-  {
-    name: "Word problems",
-    summary:
-      "Turning a sentence into arithmetic or an equation — the skill every other topic on this list is eventually used for.",
-    looksLike: "A train covers 210 km in 3 hours. What is its average speed?",
+      "Pre-algebra brings in formulas for area, perimeter and missing sides of shapes.",
+    points: [
+      "Area of a rectangle: A = l × w.",
+      "Perimeter of a rectangle: P = 2l + 2w.",
+      "Area of a triangle: A = (1/2)bh.",
+      "Area is counted in square units, like cm² or m².",
+    ],
+    example: {
+      label: "A rectangle 8 long and 5 wide",
+      lines: ["Area: 8 × 5 = 40", "Perimeter: 2(8) + 2(5) = 26"],
+    },
   },
 ];
 
-/** One formula, with what each letter in it means. */
+/** One formula, with what its letters mean and a worked example. */
 export interface Formula {
   name: string;
   /** Written the way it is set on paper. */
   expression: string;
+  /** What each letter stands for, one line each. */
+  letters?: string[];
   meaning: string;
+  /** A worked example, line by line. */
+  example?: string[];
 }
 
 export interface FormulaGroup {
@@ -203,133 +231,124 @@ export interface FormulaGroup {
 
 export const FORMULA_GROUPS: FormulaGroup[] = [
   {
-    heading: "Money",
-    formulas: [
-      {
-        name: "Profit",
-        expression: "Profit = selling price − cost price",
-        meaning: "What is left when what you paid comes off what you sold it for.",
-      },
-      {
-        name: "Loss",
-        expression: "Loss = cost price − selling price",
-        meaning: "The same subtraction the other way round, when the sale was the smaller figure.",
-      },
-      {
-        name: "Profit percentage",
-        expression: "Profit % = (profit ÷ cost price) × 100",
-        meaning: "Profit measured against what it cost, never against what it sold for.",
-      },
-      {
-        name: "Discount",
-        expression: "Discount = marked price − sale price",
-        meaning: "The amount taken off. As a percentage it is discount ÷ marked price × 100.",
-      },
-      {
-        name: "Sale price",
-        expression: "Sale price = marked price × (100 − discount %) ÷ 100",
-        meaning: "What you actually pay once the percentage has come off.",
-      },
-      {
-        name: "Simple interest",
-        expression: "I = (P × R × T) ÷ 100",
-        meaning: "P is the amount borrowed or saved, R the rate per year, T the number of years.",
-      },
-    ],
-  },
-  {
-    heading: "Proportion and percentage",
-    formulas: [
-      {
-        name: "Percentage of an amount",
-        expression: "Part = (percentage ÷ 100) × whole",
-        meaning: "A percentage is a fraction out of a hundred, and “of” means multiply.",
-      },
-      {
-        name: "Percentage change",
-        expression: "Change % = (new − old) ÷ old × 100",
-        meaning: "A negative answer is a decrease. The old figure is always the one on the bottom.",
-      },
-      {
-        name: "Proportion",
-        expression: "a ÷ b = c ÷ d, so a × d = b × c",
-        meaning: "Cross multiplication: the trick that turns a proportion into an equation.",
-      },
-      {
-        name: "Unit rate",
-        expression: "Rate = total ÷ number of units",
-        meaning: "Price per kilogram, words per minute, miles per gallon — all the same division.",
-      },
-    ],
-  },
-  {
-    heading: "Motion and measurement",
+    heading: "Speed and distance",
     formulas: [
       {
         name: "Speed",
-        expression: "Speed = distance ÷ time",
-        meaning:
-          "Rearranged: distance = speed × time, and time = distance ÷ speed. The units must match — km and hours give km/h.",
+        expression: "s = d ÷ t",
+        letters: ["s is speed", "d is distance", "t is time"],
+        meaning: "How far you went, shared out over how long it took.",
+        example: ["A car goes 150 miles in 3 hours.", "150 ÷ 3 = 50", "The speed is 50 mph."],
       },
       {
-        name: "Average",
-        expression: "Mean = sum of the values ÷ how many values",
-        meaning: "Add them all up, divide by the count.",
-      },
-      {
-        name: "Perimeter of a rectangle",
-        expression: "P = 2(l + w)",
-        meaning: "The distance once around the outside.",
-      },
-      {
-        name: "Area of a rectangle",
-        expression: "A = l × w",
-        meaning: "Counted in square units — cm², m².",
-      },
-      {
-        name: "Area of a triangle",
-        expression: "A = ½ × base × height",
-        meaning: "The height is the perpendicular height, not the sloping side.",
-      },
-      {
-        name: "Circle",
-        expression: "C = 2πr   and   A = πr²",
-        meaning: "Circumference is the way around; area is the space inside.",
-      },
-      {
-        name: "Volume of a cuboid",
-        expression: "V = l × w × h",
-        meaning: "Counted in cubic units — cm³, m³.",
+        name: "Distance",
+        expression: "d = s × t",
+        letters: ["d is distance", "s is speed", "t is time"],
+        meaning: "The same formula turned around, when you know the speed and the time.",
+        example: ["A car goes 60 mph for 4 hours.", "60 × 4 = 240", "It travels 240 miles."],
       },
     ],
   },
   {
-    heading: "Numbers and powers",
+    heading: "Percent and money",
     formulas: [
       {
-        name: "Pythagoras' theorem",
-        expression: "a² + b² = c²",
-        meaning:
-          "In a right-angled triangle, c is the hypotenuse — the side opposite the right angle, always the longest.",
+        name: "Percent of a number",
+        expression: "part = percent × whole",
+        meaning: "Turn the percent into a decimal first. 20% becomes 0.20.",
+        example: ["What is 20% of 80?", "0.20 × 80 = 16"],
       },
       {
-        name: "Index laws",
-        expression: "aᵐ × aⁿ = aᵐ⁺ⁿ,  aᵐ ÷ aⁿ = aᵐ⁻ⁿ,  (aᵐ)ⁿ = aᵐⁿ",
-        meaning: "Add the powers to multiply, subtract to divide, multiply to raise a power to a power.",
+        name: "Profit",
+        expression: "profit = selling price − cost price",
+        meaning: "What is left over when what you paid comes off what you sold it for.",
+        example: ["You buy a bike for $80 and sell it for $95.", "95 − 80 = 15", "The profit is $15."],
       },
       {
-        name: "Square root",
-        expression: "√a × √a = a",
-        meaning: "The square root undoes the square. √144 is 12, because 12 × 12 is 144.",
+        name: "Loss",
+        expression: "loss = cost price − selling price",
+        meaning: "The same subtraction the other way round, when you sold it for less than you paid.",
       },
       {
-        name: "Order of operations",
-        expression: "Brackets → Indices → ÷ and × → + and −",
-        meaning:
-          "Division and multiplication rank equally and are worked left to right, and so do addition and subtraction.",
+        name: "Discount",
+        expression: "discount = marked price − sale price",
+        meaning: "The money taken off the price. As a percent it is discount ÷ marked price × 100.",
+        example: ["A $50 shirt is on sale for $40.", "50 − 40 = 10", "The discount is $10, which is 20%."],
+      },
+      {
+        name: "Sale price",
+        expression: "sale price = marked price × (100 − discount %) ÷ 100",
+        meaning: "What you actually pay once the percent has come off.",
+        example: ["A $80 jacket is 15% off.", "80 × 85 ÷ 100 = 68", "You pay $68."],
       },
     ],
   },
+  {
+    heading: "Shapes",
+    formulas: [
+      {
+        name: "Area of a rectangle",
+        expression: "A = l × w",
+        letters: ["l is the length", "w is the width"],
+        meaning: "The space inside, counted in square units.",
+      },
+      {
+        name: "Perimeter of a rectangle",
+        expression: "P = 2l + 2w",
+        letters: ["l is the length", "w is the width"],
+        meaning: "The distance all the way around the outside.",
+      },
+      {
+        name: "Area of a triangle",
+        expression: "A = (1/2)bh",
+        letters: ["b is the base", "h is the height"],
+        meaning: "The height goes straight up from the base. It is not the slanted side.",
+        example: ["A triangle with base 10 and height 6.", "(1/2)(10)(6) = 30"],
+      },
+      {
+        name: "Pythagorean theorem",
+        expression: "a² + b² = c²",
+        letters: [
+          "a is one shorter side",
+          "b is the other shorter side",
+          "c is the hypotenuse, the longest side",
+        ],
+        meaning: "It only works in a right triangle, the kind with a square corner.",
+        example: ["Sides of 3 and 4.", "3² + 4² = c²", "9 + 16 = c²", "25 = c²", "c = √25 = 5"],
+      },
+    ],
+  },
+];
+
+/** A word the course uses, and what it means. */
+export interface VocabularyEntry {
+  word: string;
+  meaning: string;
+}
+
+export const KEY_VOCABULARY: VocabularyEntry[] = [
+  { word: "Variable", meaning: "A letter that stands for a number." },
+  {
+    word: "Expression",
+    meaning: "Numbers, variables and operations with no equals sign, like 2x + 5.",
+  },
+  {
+    word: "Equation",
+    meaning: "A statement that two expressions are equal, like 2x + 5 = 11.",
+  },
+  { word: "Coefficient", meaning: "The number multiplied by a variable, like the 3 in 3x." },
+  { word: "Constant", meaning: "A number on its own, with no variable, like the 5 in 2x + 5." },
+  { word: "Factor", meaning: "A number that divides into another number evenly." },
+  { word: "Multiple", meaning: "What you get when you multiply a number by a whole number." },
+  {
+    word: "Exponent",
+    meaning: "A small raised number that says how many times to multiply the base by itself.",
+  },
+  {
+    word: "Square root",
+    meaning: "The number that gives you your number when it is multiplied by itself.",
+  },
+  { word: "Hypotenuse", meaning: "The longest side of a right triangle." },
 ];
 
 /** A worked example: the question, the steps, and the answer at the end. */
@@ -342,86 +361,77 @@ export interface WorkedExample {
 
 export const EXAMPLES: WorkedExample[] = [
   {
-    title: "Example 1 — substituting a value",
-    question: "Evaluate the expression 8 × (x + 3), where x = 2.",
+    title: "Example 1. Putting a value in",
+    question: "Work out 8 × (x + 3) when x = 2.",
     steps: [
-      "Put the value in place of the letter: 8 × (2 + 3).",
+      "Put 2 where the x is: 8 × (2 + 3).",
       "Brackets first: 2 + 3 = 5.",
-      "Then multiply: 8 × 5 = 40.",
+      "Now multiply: 8 × 5 = 40.",
     ],
     answer: "40",
   },
   {
-    title: "Example 2 — a linear equation",
-    question: "Solve 3x + 5 = 20.",
+    title: "Example 2. Substitution",
+    question: "If x = 6, what is x + 4?",
+    steps: ["Put 6 where the x is: 6 + 4.", "Add: 6 + 4 = 10."],
+    answer: "10",
+  },
+  {
+    title: "Example 3. Substitution with a coefficient",
+    question: "If y = 4, what is 3y + 2?",
     steps: [
-      "Take 5 from both sides, so the term with x is alone: 3x = 15.",
+      "3y means 3 times y, so put 4 in: 3(4) + 2.",
+      "Multiply first: 12 + 2.",
+      "Then add: 14.",
+    ],
+    answer: "14",
+  },
+  {
+    title: "Example 4. Evaluating an expression",
+    question: "If x = 3, what is 2x + 5?",
+    steps: ["Put 3 in for x: 2(3) + 5.", "Multiply first: 6 + 5.", "Then add: 11."],
+    answer: "11",
+  },
+  {
+    title: "Example 5. One-step equations",
+    question: "Solve x + 8 = 15, then x − 5 = 9, then 4x = 20.",
+    steps: [
+      "x + 8 = 15: subtract 8 from both sides, so x = 7.",
+      "x − 5 = 9: add 5 to both sides, so x = 14.",
+      "4x = 20: divide both sides by 4, so x = 5.",
+    ],
+    answer: "x = 7, x = 14, x = 5",
+  },
+  {
+    title: "Example 6. A two-step equation",
+    question: "Solve 2x + 5 = 17.",
+    steps: [
+      "Subtract 5 from both sides: 2x = 12.",
+      "Divide both sides by 2: x = 6.",
+      "Check it: 2(6) + 5 = 17. It works.",
+    ],
+    answer: "x = 6",
+  },
+  {
+    title: "Example 7. Another two-step equation",
+    question: "Solve 3x − 4 = 11.",
+    steps: [
+      "Add 4 to both sides: 3x = 15.",
       "Divide both sides by 3: x = 5.",
-      "Check by putting it back: 3 × 5 + 5 = 20. ✓",
+      "Check it: 3(5) − 4 = 11. It works.",
     ],
     answer: "x = 5",
   },
   {
-    title: "Example 3 — order of operations",
-    question: "Work out 8 + 3 × (10 − 6)².",
+    title: "Example 8. Finding the hypotenuse",
+    question: "A right triangle has sides of 6 and 8. How long is the hypotenuse?",
     steps: [
-      "Brackets first: 10 − 6 = 4, so the expression is 8 + 3 × 4².",
-      "Indices next: 4² = 16, so it is 8 + 3 × 16.",
-      "Multiplication before addition: 3 × 16 = 48.",
-      "Finally the addition: 8 + 48 = 56.",
+      "Use a² + b² = c²: 6² + 8² = c².",
+      "36 + 64 = c².",
+      "100 = c².",
+      "c = √100, so c = 10.",
     ],
-    answer: "56",
-  },
-  {
-    title: "Example 4 — percentage and discount",
-    question: "A jacket is marked at $80 and is reduced by 15%. What does it cost?",
-    steps: [
-      "Find the discount: 15 ÷ 100 × 80 = $12.",
-      "Take it off the marked price: 80 − 12 = $68.",
-      "Or in one step: 80 × (100 − 15) ÷ 100 = 80 × 0.85 = $68.",
-    ],
-    answer: "$68",
-  },
-  {
-    title: "Example 5 — speed",
-    question: "A train covers 210 km in 3 hours. What is its average speed?",
-    steps: [
-      "Speed = distance ÷ time.",
-      "Both units are already the ones the answer wants: kilometres and hours.",
-      "210 ÷ 3 = 70.",
-    ],
-    answer: "70 km/h",
-  },
-  {
-    title: "Example 6 — Pythagoras' theorem",
-    question: "A right-angled triangle has shorter sides of 6 cm and 8 cm. How long is the hypotenuse?",
-    steps: [
-      "a² + b² = c², so 6² + 8² = c².",
-      "36 + 64 = 100, so c² = 100.",
-      "Take the square root of both sides: c = √100 = 10.",
-    ],
-    answer: "10 cm",
-  },
-  {
-    title: "Example 7 — ratio",
-    question: "Share $60 between two people in the ratio 3 : 2.",
-    steps: [
-      "Add the parts of the ratio: 3 + 2 = 5 parts in total.",
-      "Find one part: 60 ÷ 5 = $12.",
-      "Multiply out: 3 × 12 = $36 and 2 × 12 = $24.",
-      "Check they add back to the whole: 36 + 24 = $60. ✓",
-    ],
-    answer: "$36 and $24",
-  },
-  {
-    title: "Example 8 — factors and multiples",
-    question: "Find the highest common factor and the lowest common multiple of 24 and 36.",
-    steps: [
-      "Write each as a product of primes: 24 = 2³ × 3, and 36 = 2² × 3².",
-      "For the HCF take the lowest power of each shared prime: 2² × 3 = 12.",
-      "For the LCM take the highest power of every prime: 2³ × 3² = 72.",
-    ],
-    answer: "HCF 12, LCM 72",
+    answer: "10",
   },
 ];
 
@@ -430,31 +440,41 @@ export const PRE_ALGEBRA_FAQ: Array<{ question: string; answer: string }> = [
   {
     question: "What is pre-algebra, in one sentence?",
     answer:
-      "Pre-algebra is the course that takes arithmetic — whole numbers, fractions, decimals, percentages — and shows that its rules still hold when one of the numbers is missing and a letter is standing in its place. It is the bridge between working out 3 × 5 + 5 and solving 3x + 5 = 20.",
+      "Pre-algebra is the math class that takes you from basic arithmetic into algebra. You start using letters, called variables, to stand for numbers you do not know yet.",
   },
   {
-    question: "How is pre-algebra different from algebra 1?",
+    question: "What is the difference between an expression and an equation?",
     answer:
-      "Pre-algebra handles one unknown at a time and asks you to undo what was done to it, one step at a time. Algebra 1 treats the expression itself as the object: you factorise it, rearrange it, graph it, and solve equations where the unknown appears squared or on both sides in more complicated ways. Pre-algebra teaches the rules; algebra 1 makes you choose which rule to use.",
+      "An expression is numbers, variables and operations with no equals sign, like 2x + 5. There is nothing to solve. An equation has an equals sign, like 2x + 5 = 11, and it says the two sides are worth the same. That is what you solve.",
+  },
+  {
+    question: "How is pre-algebra different from algebra?",
+    answer:
+      "Pre-algebra brings in variables, equations, formulas and number rules, and the equations are short ones like x + 4 = 10 or 3x = 15. Algebra uses those same skills on harder problems, like 3x + 7 = 22 or 4(x + 2) − 3 = 17, where you have more steps and you choose the order to do them in.",
   },
   {
     question: "And algebra 2?",
     answer:
-      "Algebra 2 moves from single equations to families of functions — quadratics, exponentials, logarithms, rational and radical functions — and to what their graphs look like. A pre-algebra question has one answer. An algebra 2 question is often about behaviour: where a function is increasing, what happens as x grows, which values are impossible.",
+      "Algebra 2 comes later, usually after geometry. It works with whole families of equations, including ones where the letter is squared or is a power, and it asks about graphs as much as about answers. A pre-algebra question has one answer. An algebra 2 question is often about a shape or a pattern.",
   },
   {
-    question: "What age or grade is pre-algebra for?",
+    question: "What grade is pre-algebra for?",
     answer:
-      "It is usually taught somewhere between grades 6 and 8, roughly ages 11 to 14, but the topics are the ones any adult returning to maths needs first. Nothing on this page assumes you did it the first time round.",
+      "Usually grades 6 to 8, around ages 11 to 14. The topics are also the first ones any adult going back to math needs, and nothing on this page assumes you remember them already.",
   },
   {
-    question: "Do I need to memorise every formula?",
+    question: "What is the one rule I should remember?",
     answer:
-      "No. A handful are worth knowing by heart because they turn up constantly — speed = distance ÷ time, area of a rectangle, percentage of an amount, Pythagoras' theorem. The rest are worth understanding: if you know that profit is what is left after the cost comes off, you can write the formula down whenever you need it.",
+      "Whatever you do to one side of an equation, do the same thing to the other side. An equation is a balance. If you take 5 off the left, take 5 off the right, and it stays true.",
   },
   {
-    question: "What does the solver on this page actually do?",
+    question: "Do I have to memorize every formula?",
     answer:
-      "It solves a linear equation in one unknown and shows every step it took, and it evaluates an expression once you give it a value for the letter. It is meant to be checked against, not copied from: the steps are the point, because on a test nobody marks the answer alone.",
+      "No. A few are worth knowing by heart because they come up all the time: speed = distance ÷ time, area of a rectangle, percent of a number, and a² + b² = c². The rest are worth understanding, because then you can write them down when you need them.",
+  },
+  {
+    question: "What does the solver on this page do?",
+    answer:
+      "It solves an equation with one letter in it and shows every step it took, and it works out an expression once you give the letter a value. Use it to check your own work. The steps are the part that gets graded, so copying only the last line does not help you.",
   },
 ];

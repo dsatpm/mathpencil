@@ -1,10 +1,11 @@
 import type { Route } from "./+types/terms";
 import { PaperSheet } from "../components/PaperSheet";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
-const TITLE = "Terms of use — MathPencil";
+const TITLE = "Terms of use | MathPencil";
 const DESCRIPTION =
   "The terms on which MathPencil is offered: free to use, no account, no warranty that an answer is fit for a decision that matters.";
 
@@ -67,7 +68,7 @@ export default function Terms() {
 
           <h2 className={HEADING}>Check your own arithmetic</h2>
           <p className={BODY}>
-            MathPencil is offered as it is, with no warranty of any kind — including no warranty that
+            MathPencil is offered as it is, with no warranty of any kind, including no warranty that
             a given answer is correct, or that the site is fit for any particular purpose. It is
             built carefully and the two engines behind it are described openly on the{" "}
             <a href="/#how-it-works" className={LINK}>
@@ -81,7 +82,7 @@ export default function Terms() {
           <h2 className={HEADING}>What you agree not to do</h2>
           <ul className={LIST}>
             <li>
-              Attempt to interfere with the site, its server, or anyone else's use of it — including
+              Attempt to interfere with the site, its server, or anyone else's use of it, including
               by automated request volume intended to degrade it.
             </li>
             <li>Present MathPencil as your own product, or remove or obscure its attribution.</li>
@@ -115,7 +116,7 @@ export default function Terms() {
           <h2 className={HEADING}>Liability</h2>
           <p className={BODY}>
             To the fullest extent the law allows, HTPdevs is not liable for any loss or damage arising
-            from your use of MathPencil or from reliance on a result it produced — including lost
+            from your use of MathPencil or from reliance on a result it produced, including lost
             profit, lost data, or consequential loss of any kind. Nothing here limits liability that
             cannot lawfully be limited, and if you are a consumer, this does not affect the statutory
             rights you have where you live.
@@ -145,6 +146,7 @@ export default function Terms() {
         </PaperSheet>
       </main>
 
+      <ScrollToTop />
       <SiteFooter />
     </div>
   );

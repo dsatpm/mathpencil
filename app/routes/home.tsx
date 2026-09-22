@@ -1,11 +1,12 @@
 import type { Route } from "./+types/home";
 import { AddingMachine } from "../components/AddingMachine";
 import { MachineNotes } from "../components/MachineNotes";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
-const TITLE = "MathPencil — a simple calculator for quick calculations";
+const TITLE = "MathPencil: a simple calculator for quick calculations";
 const DESCRIPTION =
   "A calculator that prints its working to a tape, plus a field for pasting a sum you already have written down. Works with a mouse, a keyboard, or a number pad.";
 
@@ -76,7 +77,7 @@ export default function Home() {
           {/* The page's heading lives in the machine's own type, so it is said
               once for a screen reader rather than twice on screen. */}
           <h1 className="sr-only">
-            MathPencil calculator — add, subtract, multiply, and divide
+            MathPencil calculator: add, subtract, multiply, and divide
           </h1>
           <AddingMachine />
         </div>
@@ -86,6 +87,7 @@ export default function Home() {
         </div>
       </main>
 
+      <ScrollToTop />
       <SiteFooter />
     </div>
   );

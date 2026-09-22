@@ -105,7 +105,7 @@ export function MachineNotes() {
           <span className="font-mono">Enter</span> or <span className="font-semibold">Solve</span>,
           and it is answered in one go. It takes parentheses '()', thousands separators like{" "}
           <span className="font-mono">1,250</span> and whichever multiplication and negative characters
-          your source happened to use — <span className="font-mono">*</span>,{" "}
+          your source happened to use: <span className="font-mono">*</span>,{" "}
           <span className="font-mono">×</span>, <span className="font-mono">x</span>, and the long
           dashes word processors substitute for a hyphen.
         </p>

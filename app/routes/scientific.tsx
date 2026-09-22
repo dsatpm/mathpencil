@@ -1,11 +1,12 @@
 import type { Route } from "./+types/scientific";
 import { ScientificCalculator } from "../components/ScientificCalculator";
 import { ScientificNotes, SCIENTIFIC_FAQ } from "../components/ScientificNotes";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { absoluteUrl, SITE_NAME } from "../lib/site";
 
-const TITLE = "Scientific calculator — MathPencil";
+const TITLE = "Scientific calculator | MathPencil";
 const DESCRIPTION =
   "A free scientific calculator with trigonometry, logarithms, powers, roots, π and e. Build the whole expression, read it back, then total it. Works with a mouse, a keyboard, or a number pad.";
 
@@ -81,7 +82,7 @@ export default function Scientific() {
             below are reading matter, and none of it is needed for an answer. */}
         <div className="relative flex w-full flex-1 items-center justify-center">
           <h1 className="sr-only">
-            Scientific calculator — trigonometry, logarithms, powers and roots
+            Scientific calculator: trigonometry, logarithms, powers and roots
           </h1>
           <ScientificCalculator />
         </div>
@@ -91,6 +92,7 @@ export default function Scientific() {
         </div>
       </main>
 
+      <ScrollToTop />
       <SiteFooter />
     </div>
   );
