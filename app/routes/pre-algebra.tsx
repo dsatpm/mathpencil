@@ -11,7 +11,6 @@ import {
   KEY_VOCABULARY,
   MAIN_IDEA,
   MAIN_TAKEAWAY,
-  PRE_ALGEBRA_FAQ,
   SECTIONS,
   TOPICS,
 } from "../data/pre-algebra";
@@ -54,14 +53,6 @@ export function meta({}: Route.MetaArgs) {
             publisher: { "@type": "Organization", name: "HTPdevs", url: "https://htpdevs.tech" },
             articleSection: SECTIONS.map((section) => section.title),
             isAccessibleForFree: true,
-          },
-          {
-            "@type": "FAQPage",
-            mainEntity: PRE_ALGEBRA_FAQ.map((entry) => ({
-              "@type": "Question",
-              name: entry.question,
-              acceptedAnswer: { "@type": "Answer", text: entry.answer },
-            })),
           },
         ],
       },
@@ -447,25 +438,10 @@ export default function PreAlgebra() {
                 <div className="mt-5">
                   <PreAlgebraSolver />
                 </div>
-              </Lesson>
 
-              <Lesson id="questions" title="Common questions">
-                <dl className="mt-4">
-                  {PRE_ALGEBRA_FAQ.map((entry, index) => (
-                    <div
-                      key={entry.question}
-                      className={index === 0 ? "" : "mt-4 border-t border-pa-ink/12 pt-4"}
-                    >
-                      <dt className="font-sans text-[1rem] font-bold leading-[1.45rem] text-pa-ink">
-                        {entry.question}
-                      </dt>
-                      <dd className="m-0 mt-1.5 font-sans text-[1rem] leading-[1.6rem] text-pa-ink-soft">
-                        {entry.answer}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-
+                {/* The last word of the lesson. It closed the questions section
+                    before that section came off the page; it is not a question,
+                    so it stays. */}
                 <div className="mt-6 bg-pa-note/45 px-4 py-4">
                   <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
                     The main thing to take away

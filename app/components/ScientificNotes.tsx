@@ -80,45 +80,6 @@ const FUNCTION_ROWS: Array<{ key: string; does: string }> = [
   },
 ];
 
-/** The questions this instrument's own behaviour raises. Mirrored into FAQ structured data. */
-export const SCIENTIFIC_FAQ: Array<{ question: string; answer: string }> = [
-  {
-    question: "Is this a different calculator from the one on the home page?",
-    answer:
-      "Yes, and deliberately so. The home page is a printing adding machine: each key resolves what is already standing and prints it to a paper tape, which is what you want for a column of receipts. This is a scientific instrument: the keys compose a whole expression, you can see it before it is worked out, and nothing is resolved until you total. Formulas are read whole, so they are entered whole.",
-  },
-  {
-    question: "Why does sin(30) give 0.5 here and −0.988 on another calculator?",
-    answer:
-      "Because of the angle mode. In DEG the instrument reads 30 as thirty degrees, whose sine is exactly 0.5. In RAD it reads it as thirty radians, whose sine is −0.988. The mode is printed at the top left of the window at all times, and the DEG/RAD key switches it, which withdraws the answer underneath, because the same expression means something else in the other unit.",
-  },
-  {
-    question: "What does 2 + 3 × 4 come to?",
-    answer:
-      "Fourteen. This instrument honours operator precedence and brackets the way written arithmetic does: multiplication and division bind tighter than addition and subtraction, powers bind tighter still, and brackets override all of it. The adding machine on the home page answers 20 to the same keys, because a printing machine resolves each operator as it is pressed, and its tape shows exactly that route.",
-  },
-  {
-    question: "Are my calculations sent anywhere?",
-    answer:
-      "No. Everything here is arithmetic running in your own browser. Nothing you enter is transmitted to MathPencil, stored on a server, or written to your device. Closing the tab is the end of it.",
-  },
-  {
-    question: "Do I need an account, an app, or a download?",
-    answer:
-      "No. MathPencil is a web page. There is no sign-up, no install, no paid tier and no usage limit, and the scientific calculator is as free as the adding machine.",
-  },
-  {
-    question: "What happens if I ask for something that has no answer?",
-    answer:
-      "It says so, in a sentence, instead of printing a wrong figure: the square root of a negative number, the tangent of 90°, the logarithm of zero, a factorial of a half, a division by zero. The expression stays on screen so you can correct the part that was wrong rather than key the whole thing again.",
-  },
-  {
-    question: "Can I leave brackets unclosed?",
-    answer:
-      "Yes. Brackets still open when you total are closed for you, which is how a keypad is actually used: sin(45 is read as sin(45). Everything else has to be a complete expression: a trailing operator or two numbers with nothing between them comes back as a sentence saying so.",
-  },
-];
-
 export function ScientificNotes() {
   return (
     <div className="mt-8 flex w-full flex-col items-center gap-4 sm:mt-12">
@@ -282,31 +243,6 @@ export function ScientificNotes() {
           The page itself is rendered to plain HTML ahead of time and served as a static file. There
           is no server-side calculation and nothing to send a figure to.
         </p>
-      </PaperSheet>
-
-      <PaperSheet ariaLabelledBy="sci-faq">
-        <h2
-          id="sci-faq"
-          className="font-sans text-[1.35rem] font-bold leading-tight text-ink sm:text-[1.5rem]"
-        >
-          Common questions
-        </h2>
-
-        <dl className="mt-4">
-          {SCIENTIFIC_FAQ.map((entry, index) => (
-            <div
-              key={entry.question}
-              className={index === 0 ? "" : "mt-4 border-t border-ink/15 pt-4"}
-            >
-              <dt className="font-sans text-[1rem] font-bold leading-[1.45rem] text-ink">
-                {entry.question}
-              </dt>
-              <dd className="m-0 mt-1.5 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
-                {entry.answer}
-              </dd>
-            </div>
-          ))}
-        </dl>
       </PaperSheet>
 
       <PaperSheet ariaLabelledBy="sci-ads-note">
