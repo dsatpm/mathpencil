@@ -2,8 +2,9 @@
   <img src="public/mathpencil.png" alt="MathPencil logo" width="300" />
 </a>
 
-A calculator that prints its working to a paper tape, the way a desktop adding
-machine does.
+Three instruments on one desk: a calculator that prints its working to a paper
+tape, a scientific calculator that shows the whole expression before it answers
+it, and a pre-algebra lesson with a solver that shows every step.
 
 Server-rendered with React Router 8, styled with Tailwind 4.
 
@@ -20,102 +21,165 @@ npm run build       # → build/client and build/server
 npm run start       # serve the production build
 ```
 
-## How the machine is put together
+## The three instruments
+
+| Page | What it is | Arithmetic |
+| --- | --- | --- |
+| `/` | A printing adding machine. Every entry prints to a tape, the total is struck in ribbon red. | Immediate execution, like a physical keypad |
+| `/scientific` | An engineer's calculator. The keys build a whole expression in a liquid-crystal window. | Operator precedence, brackets, powers |
+| `/pre-algebra` | A lesson, with a solver on two chalkboards. | Exact fractions, one unknown |
+
+They disagree on purpose. `2 + 3 × 4` is 20 on the home page, because a printing
+machine resolves each operator as it is pressed and the tape shows exactly that
+route. It is 14 on `/scientific`, because written arithmetic binds × tighter
+than +. A keypad that silently applied precedence would contradict the tape
+printed above it.
+
+Each instrument has its own palette and nothing else changes: the desk, the
+paper and the type are shared. The adding machine is cream and ribbon red, the
+scientific calculator is graphite with a pale crystal window, and the lesson is
+cool grid paper with a chalkboard for the working.
+
+## How it is put together
 
 ```
 app/
 ├── root.tsx                    # document shell, fonts, AdSense loader
-├── routes.ts                   # / and /contact
-├── app.css                     # theme tokens, fonts, the two animations
+├── routes.ts                   # /, /scientific, /pre-algebra, /contact, /privacy, /terms
+├── app.css                     # theme tokens for all three instruments, fonts, animations
 ├── routes/
-│   ├── home.tsx                # the machine on its desk, then the notes
+│   ├── home.tsx                # the adding machine on its desk, then the notes
+│   ├── scientific.tsx          # the scientific calculator, then its notes
+│   ├── pre-algebra.tsx         # the lesson: contents gutter and eight sections
 │   ├── contact.tsx
 │   ├── privacy.tsx             # privacy policy
 │   └── terms.tsx               # terms of use
 ├── components/
 │   ├── SiteHeader.tsx          # masthead; nav links live in NAV_LINKS
 │   ├── SiteFooter.tsx          # legal bar; links live in FOOTER_LINKS
+│   ├── ScrollToTop.tsx         # appears after 1.5 screens; tone per page
 │   ├── PaperSheet.tsx          # a sheet of paper on the desk, for prose
-│   ├── MachineNotes.tsx        # what it is for, how to use it, how it works, FAQ
+│   │
 │   ├── AddingMachine.tsx       # assembles the machine, owns the keyboard
 │   ├── Tape.tsx                # the paper; newest line at the platen
 │   ├── Keypad.tsx              # the machine face
 │   ├── Key.tsx                 # one moulded key
 │   ├── OperationsTooltip.tsx   # the "Calculator Operations" legend
-│   └── Docket.tsx              # paste a written sum and solve it
+│   ├── Docket.tsx              # paste a written sum and solve it
+│   ├── MachineNotes.tsx        # what it is for, how to use it, how it works, FAQ
+│   │
+│   ├── ScientificCalculator.tsx # assembles the instrument, owns the keyboard
+│   ├── SciDisplay.tsx          # the crystal window, indicators and struck log
+│   ├── SciKeypad.tsx           # the face; shift reaches the gold labels
+│   ├── SciKey.tsx              # one key, with its second function printed above
+│   ├── ScientificNotes.tsx     # how to work it, every key, FAQ
+│   │
+│   ├── OnThisPage.tsx          # the contents chalkboard; crosses off as you scroll
+│   └── PreAlgebraSolver.tsx    # the two boards: solve, and evaluate
+├── data/
+│   ├── pre-algebra.json        # source content, and the reading level it sets
+│   └── pre-algebra.ts          # that content as typed objects the page renders
 └── lib/
-    ├── calc-engine.ts          # the keypad's state machine
+    ├── calc-engine.ts          # the adding machine's state machine
     ├── parse-expression.ts     # the docket's parser
+    ├── sci-engine.ts           # the scientific calculator's state machine
+    ├── parse-scientific.ts     # functions, powers, constants, angle modes
+    ├── linear-solver.ts        # exact fractions, one unknown, working shown
     └── format.ts               # how numbers are printed
 ```
 
-Two different kinds of arithmetic, on purpose. The keypad runs
-**immediate-execution** semantics, like a physical adding machine: `2 + 3 × 4`
-resolves left to right to 20. The docket honours **operator precedence and
-brackets**, because written arithmetic does. A keypad that silently applied
-precedence would contradict the tape printed above it.
+Every parser here is written by hand. None of them call `eval` or
+`new Function`: what a visitor types is untrusted input, and the ability to run
+arbitrary code is far too large a capability to hand a calculator.
 
 ## Keyboard and number pad
 
-The keyboard is a first-class way in, not a fallback — it works the moment the
-page loads, without clicking into anything.
+The keyboard is a first-class way in, not a fallback. It works the moment a page
+loads, without clicking into anything.
 
-| Keys | Does |
-| --- | --- |
-| `0`–`9`, `.` `,` | Key a number |
-| `+` `-` `*` `x` `/` | Operators |
-| `Enter` `=` | Total |
-| `Backspace` | Rub out the last digit |
-| `Delete`, `Clear` | Clear entry |
-| `Escape` | All clear |
-| `%` | Percent |
-| `Tab` + `Enter` | Press the focused key |
+| Keys | Adding machine | Scientific |
+| --- | --- | --- |
+| `0`–`9`, `.` `,` | Key a number | Write a number |
+| `+` `-` `*` `/` | Operators | Operators |
+| `x` | Multiply | A letter, for spelling `exp` |
+| `^` | | To the power of |
+| `(` `)` | | Brackets; any left open close themselves |
+| Letters | | Spell a function: `sin(45)` |
+| `!` `%` | `%` only | Factorial, and divide by a hundred |
+| `Enter` `=` | Total | Total |
+| `Backspace` | Rub out the last digit | Rub out the last key press, whole |
+| `Delete`, `Clear` | Clear entry | Clear the expression |
+| `Escape` | All clear | All clear |
+| `Tab` + `Enter` | Press the focused key | Press the focused key |
 
 The numeric keypad is read from `event.code`, not `event.key`, so it keeps
-working with Num Lock off — where a keypad otherwise reports `End`, `PageDown`
+working with Num Lock off, where a keypad otherwise reports `End`, `PageDown`
 and the like.
 
 ## Accessibility
 
 - **Browser zoom and text-size settings.** Every measurement is in `rem`, and
-  the two figures that need to grow with their container use `cqi` inside a
+  the figures that need to grow with their container use `cqi` inside a
   container query rather than `vw`. A viewport unit ignores the browser's text
   size; these do not. Paper, keys and figures scale together.
 - **Pinch-zoom** is left alone. Nothing caps the viewport scale, and
   `touch-action: manipulation` on buttons only kills the double-tap delay.
-- **Keyboard-only.** Tab reaches every key; Enter presses the focused one
-  rather than totalling the machine.
-- **Screen readers.** The tape is a `role="log"`, the platen line an
-  `aria-live` `<output>`, and every glyph-only key carries a label.
-- `prefers-reduced-motion` turns off the strike and the paper advance.
+- **Keyboard-only.** Tab reaches every key; Enter presses the focused one rather
+  than totalling the machine. Scroll to top moves focus to the `h1`, so a
+  keyboard visitor's place travels with the page.
+- **Screen readers.** The tape is a `role="log"`, the platen line an `aria-live`
+  `<output>`, the struck log on `/scientific` is another `role="log"`, and every
+  glyph-only key carries a label.
+- **Focus rings take the ink of what they are over**: impact black on paper,
+  gold on the instrument, biro blue on grid paper, chalk on a board.
+- `prefers-reduced-motion` turns off the strike, the paper advance and the caret
+  blink, and draws the chalk stroke without travelling.
 
-## Percentages
+## Percentages, which differ by instrument
 
-`%` converts, it does not guess. Keying `25 × 20 %` prints `20%` on the tape
-and leaves `0.2` at the platen; `=` then totals `5`. After `+` or `-` it reads
-as a percentage *of* the running total, which is what the key does on a
-physical machine: `200 + 10 %` is ten percent of two hundred.
+On the adding machine, `%` converts rather than guesses. Keying `25 × 20 %`
+prints `20%` on the tape and leaves `0.2` at the platen; `=` then totals `5`.
+After `+` or `-` it reads as a percentage *of* the running total, which is what
+the key does on a physical machine: `200 + 10 %` is ten percent of two hundred.
+
+On `/scientific`, `%` divides by a hundred and does nothing else, so `200 + 10%`
+is `200.1`. Both behaviours are documented on their own pages, because the
+difference is the kind of thing that otherwise gets filed as a bug.
 
 ## The written pages
 
-Everything below the machine on the home page — what it is for, how to work it,
-what the awkward keys do, how the two engines differ, and the FAQ — lives in
-`MachineNotes.tsx`. It sits below the fold on purpose: the One-Fold Rule is
-about what is needed to get an answer, and none of it is. The FAQ array is
-exported and fed straight into the page's `FAQPage` structured data, so the
-markup a crawler reads can never drift from the text a visitor reads.
+Everything below the machine on the home page lives in `MachineNotes.tsx`, and
+the same for `ScientificNotes.tsx`. Both sit below the fold on purpose: the
+One-Fold Rule is about what is needed to get an answer, and none of it is. Each
+FAQ array is exported and fed straight into that page's `FAQPage` structured
+data, so the markup a crawler reads can never drift from the text a visitor
+reads.
+
+`/pre-algebra` is written from `app/data/pre-algebra.json`, which also sets the
+reading level: a junior high student taking the class for the first time.
+`pre-algebra.ts` is that content as typed objects. Adding a topic is one entry
+in `TOPICS`; the contents chalkboard, the count in the introduction and the
+page's structured data all follow from the same arrays.
 
 `/privacy` and `/terms` are plain prerendered pages on the same paper. Both
 carry an `EFFECTIVE` constant at the top; change the text, change the date.
 
+## House style
+
+- **No em dashes** anywhere a visitor can read. Commas, colons and full stops
+  instead.
+- **No side-tab accent borders.** A thick rule down one side of a card is the
+  most recognisable tell of a generated interface.
+- Releases are recorded in [`CHANGELOG.md`](CHANGELOG.md) and tagged `vX.Y.Z`.
+
 ## Ads
 
 The AdSense loader sits in the document head in `app/root.tsx`, keyed by
-`ADSENSE_CLIENT`. No `<ins class="adsbygoogle">` slots are placed — auto ads
+`ADSENSE_CLIENT`. No `<ins class="adsbygoogle">` slots are placed; auto ads
 inject themselves if they are switched on in the AdSense dashboard.
 
-Two things are configured in the AdSense dashboard rather than in this repo,
-and the privacy policy assumes both are on:
+Two things are configured in the AdSense dashboard rather than in this repo, and
+the privacy policy assumes both are on:
 
 - **A consent message for the EEA, the UK and Switzerland.** AdSense →
   Privacy & messaging → GDPR. Google requires a certified CMP for traffic from
