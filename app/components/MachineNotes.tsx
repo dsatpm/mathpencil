@@ -13,15 +13,15 @@ import { PaperSheet } from "./PaperSheet";
 
 /** A keyboard key and what the machine does with it. */
 const KEYBOARD_ROWS: Array<{ keys: string; does: string }> = [
-  { keys: "0–9", does: "Numbers. Keyboard and number pad both work by default." },
+  { keys: "0–9", does: "Numbers. The top row and the number pad both work." },
   { keys: ". or ,", does: "Decimal point. Either character works." },
-  { keys: "+ − * x /", does: "Both * and x multiply." },
-  { keys: "Enter or =", does: "Total the equation." },
+  { keys: "+ − * x /", does: "Operators. Both * and x multiply." },
+  { keys: "Enter or =", does: "Total the sum and strike the answer onto the tape." },
   { keys: "Backspace", does: "Delete the last digit entered." },
   { keys: "Delete or Clear", does: "Clear the entry on screen and keep the sum going." },
-  { keys: "Escape", does: "All clear. Clears everything on the screen." },
+  { keys: "Escape", does: "All clear. Tears off the tape and starts again." },
   { keys: "%", does: "Percent." },
-  { keys: "Tab, then Enter", does: "Move between keys, then 'Enter' puts choice in calculator." },
+  { keys: "Tab, then Enter", does: "Move focus from key to key, then press the focused key." },
 ];
 
 /** The keys nobody is born knowing, and what they are for. */
@@ -59,7 +59,8 @@ export function MachineNotes() {
         </h2>
 
         <p className="mt-3 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
-          Anyone that needs a quick calculation. Free tool for everyday arithmetic.
+          MathPencil is a free printing adding machine for everyday arithmetic: receipts, invoices,
+          measurements, a column of figures that has to come out right.
         </p>
 
         <p className="mt-3 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
@@ -76,7 +77,21 @@ export function MachineNotes() {
           >
             HTPdevs
           </a>
-          . If what you have is a more complex calculation, check out one of the other calculators.
+          . A formula with roots, powers or trigonometry in it belongs on the{" "}
+          <a
+            href="/scientific"
+            className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          >
+            scientific calculator
+          </a>
+          ; an equation with a letter in it belongs on the{" "}
+          <a
+            href="/pre-algebra"
+            className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+          >
+            pre-algebra solver
+          </a>
+          .
         </p>
       </PaperSheet>
 
@@ -92,8 +107,10 @@ export function MachineNotes() {
           Working a sum step by step
         </h3>
         <p className="mt-2 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
-          Press numbers, operators, and decimal points. When you're ready, press <span className="font-mono">=</span> and the total displays in red. Keeps a running history of your calculations, so you can 
-          refer back to previous steps.
+          Press numbers, operators and decimal points. Each operator resolves what is already
+          standing and strikes it onto the tape, and <span className="font-mono">=</span> prints the
+          total in red. Every step stays on the tape above, so a figure entered five lines back can
+          be read rather than remembered.
         </p>
 
         <h3 className="mt-5 font-sans text-[1.05rem] font-bold text-ink">
@@ -113,7 +130,9 @@ export function MachineNotes() {
           Using the keyboard or the number pad
         </h3>
         <p className="mt-2 font-sans text-[1rem] leading-[1.6rem] text-ink-soft">
-          Use the keyboard if you prefer. The number pad (if your keyboard has one) also works. Just make sure Num&nbsp;Lock is off!
+          The keyboard drives the machine as fully as the mouse does, and the number pad works
+          whether Num&nbsp;Lock is on or off, because key presses are read by physical key rather
+          than by the character they produce.
         </p>
 
         <dl className="mt-4 grid grid-cols-[7.5rem_1fr] gap-x-4 gap-y-2.5 border-t border-ink/15 pt-4 font-sans text-[0.95rem]">
