@@ -28,7 +28,6 @@ export const SECTIONS: PageSection[] = [
   { id: "key-words", title: "Key words" },
   { id: "examples", title: "Worked examples" },
   { id: "solver", title: "Work an equation out" },
-  { id: "questions", title: "Common questions" },
 ];
 
 /** The one line the page is built around, shown near the top. */
@@ -432,49 +431,5 @@ export const EXAMPLES: WorkedExample[] = [
       "c = √100, so c = 10.",
     ],
     answer: "10",
-  },
-];
-
-/** The questions this subject actually raises. Mirrored into FAQ structured data. */
-export const PRE_ALGEBRA_FAQ: Array<{ question: string; answer: string }> = [
-  {
-    question: "What is pre-algebra, in one sentence?",
-    answer:
-      "Pre-algebra is the math class that takes you from basic arithmetic into algebra. You start using letters, called variables, to stand for numbers you do not know yet.",
-  },
-  {
-    question: "What is the difference between an expression and an equation?",
-    answer:
-      "An expression is numbers, variables and operations with no equals sign, like 2x + 5. There is nothing to solve. An equation has an equals sign, like 2x + 5 = 11, and it says the two sides are worth the same. That is what you solve.",
-  },
-  {
-    question: "How is pre-algebra different from algebra?",
-    answer:
-      "Pre-algebra brings in variables, equations, formulas and number rules, and the equations are short ones like x + 4 = 10 or 3x = 15. Algebra uses those same skills on harder problems, like 3x + 7 = 22 or 4(x + 2) − 3 = 17, where you have more steps and you choose the order to do them in.",
-  },
-  {
-    question: "And algebra 2?",
-    answer:
-      "Algebra 2 comes later, usually after geometry. It works with whole families of equations, including ones where the letter is squared or is a power, and it asks about graphs as much as about answers. A pre-algebra question has one answer. An algebra 2 question is often about a shape or a pattern.",
-  },
-  {
-    question: "What grade is pre-algebra for?",
-    answer:
-      "Usually grades 6 to 8, around ages 11 to 14. The topics are also the first ones any adult going back to math needs, and nothing on this page assumes you remember them already.",
-  },
-  {
-    question: "What is the one rule I should remember?",
-    answer:
-      "Whatever you do to one side of an equation, do the same thing to the other side. An equation is a balance. If you take 5 off the left, take 5 off the right, and it stays true.",
-  },
-  {
-    question: "Do I have to memorize every formula?",
-    answer:
-      "No. A few are worth knowing by heart because they come up all the time: speed = distance ÷ time, area of a rectangle, percent of a number, and a² + b² = c². The rest are worth understanding, because then you can write them down when you need them.",
-  },
-  {
-    question: "What does the solver on this page do?",
-    answer:
-      "It solves an equation with one letter in it and shows every step it took, and it works out an expression once you give the letter a value. Use it to check your own work. The steps are the part that gets graded, so copying only the last line does not help you.",
   },
 ];

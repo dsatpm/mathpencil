@@ -302,7 +302,7 @@ function parseLinear(tokens: Token[], letter: string): Linear {
     if (token.type === "letter") {
       if (token.text.toLowerCase() !== letter) {
         throw new SolveError(
-          `There are two different letters in this equation — “${letter}” and “${token.text}”. Pre-algebra solves one unknown at a time.`,
+          `There are two different letters in this equation: “${letter}” and “${token.text}”. Pre-algebra solves one unknown at a time.`,
         );
       }
       position += 1;
@@ -329,7 +329,7 @@ function parseLinear(tokens: Token[], letter: string): Linear {
   function timesLinear(left: Linear, right: Linear): Linear {
     if (!isZero(left.a) && !isZero(right.a)) {
       throw new SolveError(
-        `This multiplies ${letter} by ${letter}, which makes it a quadratic — that is algebra 1, not pre-algebra.`,
+        `This multiplies ${letter} by ${letter}, which makes it a quadratic. That is algebra 1, not pre-algebra.`,
       );
     }
     // Whichever side is a plain number multiplies through the other.
@@ -340,7 +340,7 @@ function parseLinear(tokens: Token[], letter: string): Linear {
   function overLinear(left: Linear, right: Linear): Linear {
     if (!isZero(right.a)) {
       throw new SolveError(
-        `This divides by ${letter}, which is beyond pre-algebra — the unknown has to stay out of the divisor.`,
+        `This divides by ${letter}, which is beyond pre-algebra. The unknown has to stay out of the divisor.`,
       );
     }
     return { a: divide(left.a, right.b), b: divide(left.b, right.b) };
@@ -598,7 +598,7 @@ export function evaluateExpression(input: string, valueText: string): EvaluateOu
     if (tokens.some((token) => token.type === "equals")) {
       return {
         ok: false,
-        message: "This works out an expression, so leave the “=” off — 8(x + 3), not 8(x + 3) = y.",
+        message: "This works out an expression, so leave the “=” off: 8(x + 3), not 8(x + 3) = y.",
       };
     }
 

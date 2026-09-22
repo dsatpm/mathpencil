@@ -11,17 +11,17 @@ interface OperationEntry {
  * first because `MC`, `M+`, `M−` and `MR` are the ones nobody is born knowing.
  */
 const OPERATIONS: OperationEntry[] = [
-  { key: "MC", meaning: "Memory clear - empties the stored number." },
-  { key: "M+", meaning: "Memory add - adds what is on screen to the stored number." },
-  { key: "M−", meaning: "Memory subtract - takes what is on screen off the stored number." },
-  { key: "MR", meaning: "Memory recall - puts the stored number back on screen." },
-  { key: "⌫", meaning: "Backspace - Deletes the last digit you entered." },
-  { key: "AC", meaning: "All clear - Clear everything and start fresh. Memory survives." },
-  { key: "C", meaning: "Clear entry - clears the number on screen, keeps the sum going." },
+  { key: "MC", meaning: "Memory clear: empties the stored number." },
+  { key: "M+", meaning: "Memory add: adds what is on screen to the stored number." },
+  { key: "M−", meaning: "Memory subtract: takes what is on screen off the stored number." },
+  { key: "MR", meaning: "Memory recall: puts the stored number back on screen." },
+  { key: "⌫", meaning: "Backspace: deletes the last digit entered." },
+  { key: "AC", meaning: "All clear: clears everything and starts a new tape. Memory survives." },
+  { key: "C", meaning: "Clear entry: clears the number on screen, keeps the sum going." },
   { key: "√", meaning: "Square root of the number on screen." },
-  { key: "±", meaning: "Change sign - swaps between positive and negative numbers." },
-  { key: "%", meaning: "Percent - e.g., 25 × 20 % = 5." },
-  { key: "=", meaning: "Total - finishes calculation and strikes the answer in red." },
+  { key: "±", meaning: "Change sign: swaps between positive and negative." },
+  { key: "%", meaning: "Percent: 25 × 20 % totals 5." },
+  { key: "=", meaning: "Total: finishes the calculation and strikes the answer in red." },
 ];
 
 /**
