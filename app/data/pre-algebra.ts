@@ -117,7 +117,7 @@ export interface Chapter {
   formulas?: FormulaGroup[];
   /** Words this chapter is the place to learn. */
   vocabulary?: VocabularyEntry[];
-  /** Worked examples set out step by step. */
+  /** Examples set out step by step. */
   examples?: WorkedExample[];
   /** Whether the step-by-step solver is mounted on this page. */
   showsSolver?: boolean;
@@ -134,7 +134,8 @@ export const MAIN_IDEA = {
 
 /** What the course leaves you with, printed at the end of the last chapter. */
 export const MAIN_TAKEAWAY =
-  "Pre-algebra is mostly about learning how numbers, variables, equations and formulas work together. If you understand substitution, order of operations, fractions, negative numbers and how to solve simple equations, you have a strong start for algebra.";
+  "Pre-algebra is mostly about learning how numbers, variables, equations and formulas work together. The most important skills to build are substitution, order of operations, " +
+  "working with fractions and negative numbers, and solving simple equations. If you feel comfortable with these ideas, you will have a strong foundation for algebra.";
 
 /** One row of the comparison between the three courses. */
 export interface CourseRow {
@@ -147,33 +148,27 @@ export interface CourseRow {
 export const COURSE_ROWS: CourseRow[] = [
   {
     aspect: "What it teaches",
-    preAlgebra: "The basic rules and skills you need before algebra.",
-    algebra: "The same ideas used in harder equations.",
-    algebraTwo: "Whole families of equations, and what their graphs look like.",
+    preAlgebra: "The core number skills and rules that prepare you for algebra.",
+    algebra: "How to use those skills to solve more complex equations and work with variables.",
+    algebraTwo: "How to work with different types of equations, functions, and their graphs.",
   },
   {
-    aspect: "A question it asks",
+    aspect: "Common equations",
     preAlgebra: "Solve x + 4 = 10, or solve 3x = 15.",
     algebra: "Solve 3x + 7 = 22, or solve 4(x + 2) − 3 = 17.",
     algebraTwo: "Solve x² − 5x + 6 = 0, or draw the graph of y = 2ˣ.",
   },
   {
-    aspect: "How many steps",
-    preAlgebra: "One or two. You undo what was done to the letter.",
-    algebra: "Several, and you pick the method.",
-    algebraTwo: "Several methods together, often with a graph as well.",
+    aspect: "Steps to solve",
+    preAlgebra: "Usually one or two steps. You learn to undo operations to find the unknown value.",
+    algebra: "Often several steps. You learn to decide which operations and methods to use.",
+    algebraTwo: "Often several steps using different methods, sometimes together with a graph.",
   },
   {
-    aspect: "Where the letter can be",
-    preAlgebra: "In one place, by itself.",
-    algebra: "In two or three places, sometimes inside brackets.",
-    algebraTwo: "Squared, under a root sign, or as a power.",
-  },
-  {
-    aspect: "When you take it",
-    preAlgebra: "Usually grades 6 to 8.",
-    algebra: "Usually grades 8 to 9.",
-    algebraTwo: "Usually grades 10 to 11, after geometry.",
+    aspect: "Where variables are used",
+    preAlgebra: "Variables usually appear in simple expressions and equations.",
+    algebra: "Variables may appear several times or inside parentheses.",
+    algebraTwo: "Variables can be squared (x²), appear under a square root (√x), or be used as exponents (xʸ).",
   },
 ];
 
@@ -190,23 +185,22 @@ export const CHAPTERS: Chapter[] = [
     number: 1,
     title: "Introducing pre-algebra",
     blurb:
-      "What the class is, what changes when a letter stands in for a number, and how pre-algebra, algebra and algebra 2 differ.",
+      "Pre-algebra connects the math you already know with the algebra you are about to learn. This is a good place to begin if you are new to pre-algebra or returning to math after some time away.",
     metaTitle: "Introducing pre-algebra: what it is and how it differs from algebra",
     metaDescription:
-      "Pre-algebra is where arithmetic starts using letters for numbers you do not know yet. What the class covers, and a side by side comparison of pre-algebra, algebra and algebra 2.",
+      "Learn what pre-algebra is, what you will study, and how it prepares you for algebra and Algebra 2. See how each course builds on the math skills that came before it.",
     sections: [
       { id: "what-is-pre-algebra", title: "What is pre-algebra?", kind: "what-is-pre-algebra" },
-      { id: "how-it-differs", title: "Pre-algebra, algebra and algebra 2", kind: "how-it-differs" },
+      { id: "how-it-differs", title: "Pre-algebra, algebra and Algebra 2", kind: "how-it-differs" },
     ],
     intro: [
-      "Pre-algebra is the math class that takes you from arithmetic into algebra. You start using letters, called variables, to stand for numbers you do not know yet.",
-      "It is usually taught in grades 6 to 8. The same topics are the ones covered first when returning to math later on.",
+      "Pre-algebra is the bridge between basic arithmetic and algebra. You will continue working with numbers while also learning how to use letters, called 'variables', to represent numbers that are unknown or can change.",
     ],
     related: [
       {
         to: "/pre-algebra/expressions-variables-and-equations",
         label: "Expressions, variables and equations",
-        why: "The chapter where the letter arrives and the balance rule gets used.",
+        why: "Next, you will learn how variables are used in expressions and equations, and how to solve for an unknown value.",
       },
     ],
   },
@@ -218,10 +212,10 @@ export const CHAPTERS: Chapter[] = [
       "Whole numbers and their opposites, and what happens to addition, subtraction and multiplication below zero.",
     metaTitle: "Integers and negative numbers: rules for adding, subtracting and multiplying",
     metaDescription:
-      "What an integer is, how the number line runs either side of zero, why subtracting a negative number adds, and why a negative times a negative is positive. Worked examples throughout.",
+      "What an integer is, how the number line runs either side of zero, why subtracting a negative number adds, and why a negative times a negative is positive. Examples throughout.",
     sections: [
       { id: "integers", title: "Integers and negative numbers", kind: "topic" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "examples", title: "Examples", kind: "examples" },
     ],
     intro: [
       "Arithmetic starts above zero, where every number counts something you can hold. Pre-algebra carries the same arithmetic below zero, where the numbers count what is owed, how far below sea level, or how many degrees under freezing.",
@@ -286,10 +280,10 @@ export const CHAPTERS: Chapter[] = [
       "The agreed order for working through an expression, so that two people reading it arrive at the same answer.",
     metaTitle: "Order of operations: brackets, exponents, multiply, divide, add, subtract",
     metaDescription:
-      "Why 2 + 3 × 4 is 14 and not 20, what brackets change, and how to work through an expression one rank at a time. Worked examples, and two calculators that disagree on purpose.",
+      "Why 2 + 3 × 4 is 14 and not 20, what brackets change, and how to work through an expression one rank at a time. Examples, and two calculators that disagree on purpose.",
     sections: [
       { id: "order-of-operations", title: "The order", kind: "topic" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "examples", title: "Examples", kind: "examples" },
     ],
     intro: [
       "An expression with more than one operation in it can be read more than one way. 2 + 3 × 4 is 20 if you work left to right, and 14 if you multiply first.",
@@ -600,7 +594,7 @@ export const CHAPTERS: Chapter[] = [
     sections: [
       { id: "expressions", title: "Expressions and equations", kind: "topic" },
       { id: "key-words", title: "Key words", kind: "key-words" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "examples", title: "Examples", kind: "examples" },
       { id: "solver", title: "Work an equation out", kind: "solver" },
     ],
     intro: [
@@ -697,10 +691,10 @@ export const CHAPTERS: Chapter[] = [
       "Undoing the one thing that was done to the letter, and what changes when the equals sign becomes a less-than sign.",
     metaTitle: "Inequalities and one-step equations: solving and when the sign flips",
     metaDescription:
-      "How to solve x + 8 = 15 and 4x = 20 by undoing one operation, what the four inequality signs mean, and why multiplying an inequality by a negative number flips it. Worked examples.",
+      "How to solve x + 8 = 15 and 4x = 20 by undoing one operation, what the four inequality signs mean, and why multiplying an inequality by a negative number flips it. Examples.",
     sections: [
       { id: "inequalities", title: "Inequalities and one-step equations", kind: "topic" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "examples", title: "Examples", kind: "examples" },
     ],
     intro: [
       "A one-step equation has exactly one thing done to the letter, and it is solved by undoing that one thing on both sides. Addition is undone by subtraction, multiplication by division.",
@@ -781,7 +775,7 @@ export const CHAPTERS: Chapter[] = [
       "A short way of writing repeated multiplication, and the operation that undoes it.",
     metaTitle: "Exponents and square roots: what a power means and how a root undoes it",
     metaDescription:
-      "Why 5² means 5 × 5, what 2³ works out to, and how a square root asks which number times itself makes the number you have. With worked examples.",
+      "Why 5² means 5 × 5, what 2³ works out to, and how a square root asks which number times itself makes the number you have. With Examples.",
     sections: [
       { id: "exponents", title: "Exponents and square roots", kind: "topic" },
       { id: "key-words", title: "Key words", kind: "key-words" },
@@ -835,8 +829,8 @@ export const CHAPTERS: Chapter[] = [
       "How to work out the probability of an outcome, and what the mean, median, mode and range each say about a set of numbers. Every one shown with a worked example.",
     sections: [
       { id: "probability", title: "Probability and averages", kind: "topic" },
-      { id: "formulas", title: "The formulas", kind: "formulas" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "formulas", title: "Formulas", kind: "formulas" },
+      { id: "examples", title: "Examples", kind: "examples" },
     ],
     intro: [
       "Probability puts a number on how likely something is, between zero for impossible and one for certain. It is counting: the outcomes you want, over the outcomes there are.",
@@ -926,9 +920,9 @@ export const CHAPTERS: Chapter[] = [
       "Area and perimeter of a rectangle, area of a triangle, and how the Pythagorean theorem finds the missing side of a right triangle. Every formula with its letters explained and worked out.",
     sections: [
       { id: "geometry", title: "Shapes and measurement", kind: "topic" },
-      { id: "formulas", title: "The formulas", kind: "formulas" },
+      { id: "formulas", title: "Formulas", kind: "formulas" },
       { id: "key-words", title: "Key words", kind: "key-words" },
-      { id: "examples", title: "Worked examples", kind: "examples" },
+      { id: "examples", title: "Examples", kind: "examples" },
       { id: "takeaway", title: "The main thing to take away", kind: "takeaway" },
     ],
     intro: [

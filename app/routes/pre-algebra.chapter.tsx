@@ -146,7 +146,7 @@ function TopicBlock({ chapter }: { chapter: Chapter }) {
         <p className="font-sans text-[0.68rem] font-bold uppercase tracking-[0.16em] text-pa-ink-soft">
           {example.label}
         </p>
-        <div className="mt-1.5 font-mono text-[0.95rem] leading-[1.5rem] text-pa-ink">
+        <div className="mt-1.5 font-mono text-[0.95rem] leading-4 text-pa-ink">
           {example.lines.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -235,7 +235,7 @@ function VocabularyBlock({ chapter }: { chapter: Chapter }) {
         {chapter.vocabulary.map((entry) => (
           <div key={entry.word} className="grid gap-1 py-3 sm:grid-cols-[9rem_1fr] sm:gap-4">
             <dt className="font-sans text-[0.95rem] font-bold text-pa-ink">{entry.word}</dt>
-            <dd className="m-0 font-sans text-[0.95rem] leading-[1.5rem] text-pa-ink-soft">
+            <dd className="m-0 font-sans text-[0.95rem] leading-6 text-pa-ink-soft">
               {entry.meaning}
             </dd>
           </div>
@@ -265,7 +265,7 @@ function ExamplesBlock({ chapter }: { chapter: Chapter }) {
             <h3 className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.18em] text-pa-biro">
               {example.title}
             </h3>
-            <p className="mt-1.5 font-sans text-[1rem] font-semibold leading-[1.5rem] text-pa-ink">
+            <p className="mt-1.5 font-sans text-[1rem] font-semibold leading-6 text-pa-ink">
               {example.question}
             </p>
 
@@ -326,7 +326,7 @@ function HowItDiffersBlock() {
           table and scrolls inside itself on a narrow screen rather than pushing
           the page sideways. */}
       <div className="mt-5 overflow-x-auto">
-        <table className="w-full min-w-[42rem] border-collapse text-left">
+        <table className="w-full min-w-2xl border-collapse text-left">
           <thead>
             <tr className="border-b-2 border-pa-ink/20">
               <th
@@ -367,9 +367,12 @@ function HowItDiffersBlock() {
         </table>
       </div>
 
+      <h2 className={`${H2} mt-6`}>
+        The TLDR;
+      </h2>
       <p className={BODY}>
-        The short version: pre-algebra teaches the rules, algebra makes you choose which
-        rule to use, and algebra 2 asks what the answers look like when you draw them.
+        Pre-algebra teaches you the basic rules and methods, algebra asks you to decide which methods to use, and Algebra 2 expands 
+        those ideas to more advanced equations, functions, and graphs.
       </p>
     </>
   );
@@ -380,15 +383,15 @@ function WhatIsPreAlgebraBlock() {
   return (
     <>
       <p className={BODY}>
-        In arithmetic, you are given all the numbers and you work out the answer. In
-        pre-algebra, one of the numbers is missing, and a letter stands in its place
-        until it is found. Everything else stays the same, because the rules that apply
-        to numbers apply to the letter standing in for one.
+        In arithmetic, you are usually given all the numbers and use the rules of math to find the answer.
+        In pre-algebra, one of those numbers may be unknown, so a letter, called a <span className="font-mono font-bold text-[1.05rem]">{" "}variable</span>, is
+        used to represent it until you find its value. The important idea is that the rules of arithmetic do not change. A variable
+        follows the same rules as the number it represents.
       </p>
 
       <div className="mt-5 bg-pa-note/45 px-4 py-4">
         <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
-          The same sum, two ways
+          Example
         </p>
         <dl className="mt-2.5 grid gap-2 sm:grid-cols-3">
           <div>
@@ -413,10 +416,12 @@ function WhatIsPreAlgebraBlock() {
       </div>
 
       <p className={BODY}>
-        If 7 plus something is 12, the something is 5. Pre-algebra turns that reasoning
-        into a method that still works when the numbers are too big to arrive at by
-        inspection, and the method is one rule: whatever is done to one side of an
-        equation is done to the other side as well.
+        If 7 plus an unknown number is 12, you can probably see that the missing number is 5.
+      </p>
+      <p className={BODY}>
+        Pre-albegra turns that kind of reasoning into a method you can use even when the numbers are larger or the answer is not obvious.
+        The key idea is the <span className="font-mono font-bold text-[1.05rem]">balance rule:</span> whatever operation you perform
+        on one side of an equation, you must also perform on the other side to keep the equation balanced.
       </p>
     </>
   );
@@ -532,7 +537,7 @@ export default function PreAlgebraChapter() {
                             {link.label}
                           </Link>
                         </dt>
-                        <dd className="m-0 mt-1 font-sans text-[0.95rem] leading-[1.5rem] text-pa-ink-soft">
+                        <dd className="m-0 mt-1 font-sans text-[0.95rem] leading-6 text-pa-ink-soft">
                           {link.why}
                         </dd>
                       </div>

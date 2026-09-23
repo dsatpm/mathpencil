@@ -4,7 +4,15 @@ import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { CHAPTERS, MAIN_IDEA } from "../data/pre-algebra";
-import { BODY, EYEBROW, H1, H2, LINK, MASTHEAD, SHEET } from "../lib/pre-algebra-style";
+import {
+  BODY,
+  EYEBROW,
+  H1,
+  H2,
+  LINK,
+  MASTHEAD,
+  SHEET,
+} from "../lib/pre-algebra-style";
 import { absoluteUrl, PUBLISHER, socialMeta } from "../lib/site";
 
 const TITLE = "Pre-algebra: a free course in twelve chapters";
@@ -41,7 +49,12 @@ export function meta({}: Route.MetaArgs) {
             provider: PUBLISHER,
             publisher: PUBLISHER,
             isAccessibleForFree: true,
-            offers: { "@type": "Offer", price: "0", priceCurrency: "USD", category: "Free" },
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "USD",
+              category: "Free",
+            },
             hasCourseInstance: {
               "@type": "CourseInstance",
               courseMode: "online",
@@ -76,16 +89,24 @@ export default function PreAlgebra() {
           <header className={MASTHEAD}>
             <p className={EYEBROW}>MathPencil lessons</p>
             <h1 className={H1}>Pre-algebra</h1>
-            <p className="mt-3 max-w-2xl font-sans text-[1.05rem] leading-[1.7rem] text-pa-ink-soft sm:text-[1.15rem]">
-              Pre-algebra is the math class that takes you from arithmetic into algebra.
-              You start using letters, called variables, to stand for numbers you do not
-              know yet. It is usually taught in grades 6 to 8, and it is the same ground
-              covered first when returning to math later on.
+            <p className="mt-3 max-w-3xl font-sans text-[1.05rem] leading-[1.7rem] text-pa-ink-soft sm:text-[1.15rem]">
+              Pre-algebra is the math subject that takes you from basic
+              arithmetic into algebra and helps build the foundation you'll need
+              for all future math. The course is designed to be accessible and
+              engaging for learners at every stage. We'll cover equations,
+              inequalities, ratios, percentages, integers, and other fundamental
+              pre-algebra topics.
+            </p>
+            <p className="mt-2 max-w-3xl font-sans text-[1.05rem] leading-[1.7rem] text-pa-ink-soft sm:text-[1.15rem]">
+              We have split up the course into {CHAPTERS.length} chapters, each
+              focusing on a specific aspect of pre-algebra to make learning more
+              manageable and structured. And of course, it is always going to be
+              free!
             </p>
 
             <div className="mt-5 inline-block bg-pa-note/45 px-4 py-3.5">
               <p className="font-sans text-[0.72rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
-                The whole change, in one line
+                Example
               </p>
               <p className="mt-1.5 font-mono text-[1.05rem] leading-[1.6rem] text-pa-ink">
                 {MAIN_IDEA.arithmetic} becomes {MAIN_IDEA.preAlgebra}, so{" "}
@@ -94,14 +115,28 @@ export default function PreAlgebra() {
             </div>
           </header>
 
-          <section className={`${SHEET} mt-6`} aria-labelledby="contents-heading">
+          <section
+            className={`${SHEET} mt-6`}
+            aria-labelledby="contents-heading"
+          >
             <h2 id="contents-heading" className={H2}>
-              The course, in {CHAPTERS.length} chapters
+              Welcome!
             </h2>
             <p className={BODY}>
-              The chapters are in teaching order: the number system first, then the rules
-              for working with it, then letters standing in for numbers, then the places
-              those letters get used. Each one can also be read on its own.
+              Choose a chapter to get started. If you're new to pre-algebra or haven't studied in a while, we
+              recommend starting from
+              <span
+                aria-hidden="true"
+                className="font-mono text-[0.78rem] tabular-nums text-pa-biro"
+              >
+                {" "}
+                {String(CHAPTERS[0].number).padStart(2, "0")}
+                <span className="font-sans text-[1.02rem] font-bold text-pa-ink ml-1">
+                  {CHAPTERS[0].title}{" "}
+                </span>
+              </span>
+              and working through each chapter in order. This will help you
+              build a strong foundation as you learn each new concept.
             </p>
 
             <ol className="mt-5 grid list-none gap-3 p-0 sm:grid-cols-2">
@@ -137,30 +172,35 @@ export default function PreAlgebra() {
 
           <section className={`${SHEET} mt-6`} aria-labelledby="solver-heading">
             <h2 id="solver-heading" className={H2}>
-              Checking your working
+              Checking your work
             </h2>
             <p className={BODY}>
-              The course comes with a solver that shows every line of an equation rather
-              than only the answer, and keeps fractions exact while it does it. It sits
-              on its own page, and again inside the chapter on equations.
+              The course comes with a solver that shows every line of an
+              equation rather than only the answer, and keeps fractions exact
+              while it does it. It sits on its own page, and again inside the
+              chapter on equations.
             </p>
             <p className={BODY}>
               <Link to="/pre-algebra/solver" className={LINK}>
-                Open the step-by-step solver
+                Open the solver tool
               </Link>
             </p>
           </section>
 
           <section className={`${SHEET} mt-6`} aria-labelledby="pa-ads-note">
-            <h2 id="pa-ads-note" className="font-sans text-[1.1rem] font-bold leading-tight text-pa-ink">
+            <h2
+              id="pa-ads-note"
+              className="font-sans text-[1.1rem] font-bold leading-tight text-pa-ink"
+            >
               Advertising and your privacy
             </h2>
             <p className="mt-2 font-sans text-[0.95rem] leading-[1.6rem] text-pa-ink-soft">
-              MathPencil is free, and advertising is what pays for it. Ads are served by
-              Google AdSense, which may set cookies or read device identifiers to choose
-              and measure them. Nothing you type into the solver is part of that. It stays
-              in your browser and is not shared with any advertiser. What is collected, by
-              whom, and how to turn personalised advertising off is set out in the{" "}
+              MathPencil is free, and advertising is what pays for it. Ads are
+              served by Google AdSense, which may set cookies or read device
+              identifiers to choose and measure them. Nothing you type into the
+              solver is part of that. It stays in your browser and is not shared
+              with any advertiser. What is collected, by whom, and how to turn
+              personalised advertising off is set out in the{" "}
               <Link to="/privacy" className={LINK}>
                 privacy policy
               </Link>

@@ -43,7 +43,7 @@ export function OnThisPage({ sections }: OnThisPageProps) {
                   href={`#${section.id}`}
                   aria-current={isCurrent ? "location" : undefined}
                   className={[
-                    "flex gap-2.5 py-1.5 font-sans text-[0.88rem] leading-[1.25rem] no-underline",
+                    "flex gap-2.5 py-1.5 font-sans text-[0.88rem] leading-5 no-underline",
                     isCurrent
                       ? "font-semibold text-pa-chalk-mark"
                       : isStruck
