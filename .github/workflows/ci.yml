@@ -22,3 +22,26 @@ jobs:
       - run: npm run build
       - name: Verify the build pre-rendered real HTML
         run: test -f build/client/index.html && test -f build/client/contact/index.html
+
+      # The course is a dynamic route filled in from `CHAPTERS`. If that list
+      # stops reaching the prerender config, these pages quietly stop existing
+      # and only a 404 in production would say so.
+      - name: Verify the course pre-rendered
+        run: |
+          test -f build/client/pre-algebra/index.html
+          test -f build/client/pre-algebra/solver/index.html
+          test -f build/client/pre-algebra/introduction/index.html
+          test -f build/client/pre-algebra/geometry-and-measurement/index.html
+
+      # The sitemap is generated from the build output by `postbuild`. It named
+      # four URLs by hand once and left out the two pages that matter, so the
+      # count is asserted rather than assumed.
+      - name: Verify the sitemap covers every page
+        run: |
+          test -f build/client/sitemap.xml
+          pages=$(find build/client -name index.html | wc -l)
+          urls=$(grep -c '<loc>' build/client/sitemap.xml)
+          echo "$pages pages, $urls sitemap URLs"
+          test "$pages" -eq "$urls"
+          grep -q '<loc>https://mathpencil.com/scientific</loc>' build/client/sitemap.xml
+          grep -q '<loc>https://mathpencil.com/pre-algebra</loc>' build/client/sitemap.xml
