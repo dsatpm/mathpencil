@@ -79,7 +79,7 @@ export function MachineNotes() {
           </a>
           . A formula with roots, powers or trigonometry in it belongs on the{" "}
           <a
-            href="/scientific"
+            href="/tools/scientific"
             className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
           >
             scientific calculator

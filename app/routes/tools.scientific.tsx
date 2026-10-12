@@ -1,38 +1,20 @@
-import type { Route } from "./+types/scientific";
+import type { Route } from "./+types/tools.scientific";
 import { ScientificCalculator } from "../components/ScientificCalculator";
 import { ScientificNotes } from "../components/ScientificNotes";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { absoluteUrl, SITE_NAME } from "../lib/site";
+import { absoluteUrl, PUBLISHER, SITE_NAME, socialMeta } from "../lib/site";
 
+const PATH = "/tools/scientific";
 const TITLE = "Scientific calculator | MathPencil";
 const DESCRIPTION =
   "A free scientific calculator with trigonometry, logarithms, powers, roots, π and e. Build the whole expression, read it back, then total it. Works with a mouse, a keyboard, or a number pad.";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: TITLE },
-    { name: "description", content: DESCRIPTION },
-    // Share cards and canonicals are fetched by machines that have no idea what
-    // host they came from, so every URL here is absolute.
-    { tagName: "link", rel: "canonical", href: absoluteUrl("/scientific") },
-    { property: "og:site_name", content: SITE_NAME },
-    { property: "og:title", content: TITLE },
-    { property: "og:description", content: DESCRIPTION },
-    { property: "og:type", content: "website" },
-    { property: "og:url", content: absoluteUrl("/scientific") },
-    { property: "og:image", content: absoluteUrl("/og.png") },
-    { property: "og:image:width", content: "1200" },
-    { property: "og:image:height", content: "630" },
-    { property: "og:image:alt", content: "The MathPencil wordmark" },
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: TITLE },
-    { name: "twitter:description", content: DESCRIPTION },
-    { name: "twitter:image", content: absoluteUrl("/og.png") },
-    // What the page is, in the form a crawler parses rather than reads. The
-    // questions are the same objects the page renders, so the markup cannot
-    // drift from the visible text.
+    ...socialMeta({ title: TITLE, description: DESCRIPTION, path: PATH, type: "website" }),
+    // What the page is, in the form a crawler parses rather than reads.
     {
       "script:ld+json": {
         "@context": "https://schema.org",
@@ -40,13 +22,21 @@ export function meta({}: Route.MetaArgs) {
           {
             "@type": "WebApplication",
             name: `${SITE_NAME} scientific calculator`,
-            url: absoluteUrl("/scientific"),
+            url: absoluteUrl(PATH),
             applicationCategory: "UtilitiesApplication",
             operatingSystem: "Any browser",
             description: DESCRIPTION,
             isAccessibleForFree: true,
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-            publisher: { "@type": "Organization", name: "HTPdevs", url: "https://htpdevs.tech" },
+            publisher: PUBLISHER,
+          },
+          {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: SITE_NAME, item: absoluteUrl("/") },
+              { "@type": "ListItem", position: 2, name: "Tools", item: absoluteUrl("/tools") },
+              { "@type": "ListItem", position: 3, name: "Scientific calculator", item: absoluteUrl(PATH) },
+            ],
           },
         ],
       },

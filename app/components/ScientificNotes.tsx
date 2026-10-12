@@ -116,7 +116,7 @@ export function ScientificNotes() {
           </a>
           . For a running total rather than a formula, the{" "}
           <a
-            href="/"
+            href="/tools/calculator"
             className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
           >
             printing adding machine

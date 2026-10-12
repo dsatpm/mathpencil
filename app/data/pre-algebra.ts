@@ -266,7 +266,7 @@ export const CHAPTERS: Chapter[] = [
     ],
     related: [
       {
-        to: "/",
+        to: "/tools/calculator",
         label: "The adding machine",
         why: "It prints a running total on tape, so a string of additions and subtractions below zero can be checked line by line.",
       },
@@ -331,12 +331,12 @@ export const CHAPTERS: Chapter[] = [
     ],
     related: [
       {
-        to: "/scientific",
+        to: "/tools/scientific",
         label: "The scientific calculator",
         why: "It applies the order of operations, so 2 + 3 × 4 reads 14 on its display.",
       },
       {
-        to: "/",
+        to: "/tools/calculator",
         label: "The adding machine",
         why: "It resolves each operator as the key is pressed, so the same keys read 20. A printing machine has always worked this way, and its tape shows why.",
       },
@@ -514,7 +514,7 @@ export const CHAPTERS: Chapter[] = [
     ],
     related: [
       {
-        to: "/",
+        to: "/tools/calculator",
         label: "The adding machine",
         why: "Its percent key converts and reads as a percentage of the running total, which is how a till works out a discount.",
       },
@@ -812,7 +812,7 @@ export const CHAPTERS: Chapter[] = [
     ],
     related: [
       {
-        to: "/scientific",
+        to: "/tools/scientific",
         label: "The scientific calculator",
         why: "It has keys for powers and roots, so a square root of a number that is not a whole answer can be worked out.",
       },
@@ -1007,7 +1007,7 @@ export const CHAPTERS: Chapter[] = [
     ],
     related: [
       {
-        to: "/scientific",
+        to: "/tools/scientific",
         label: "The scientific calculator",
         why: "Squares, square roots and trigonometry, for the triangles whose sides do not come out whole.",
       },
