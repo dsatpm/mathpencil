@@ -1,6 +1,6 @@
 import type { Route } from "./+types/scientific";
 import { ScientificCalculator } from "../components/ScientificCalculator";
-import { ScientificNotes, SCIENTIFIC_FAQ } from "../components/ScientificNotes";
+import { ScientificNotes } from "../components/ScientificNotes";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -47,14 +47,6 @@ export function meta({}: Route.MetaArgs) {
             isAccessibleForFree: true,
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             publisher: { "@type": "Organization", name: "HTPdevs", url: "https://htpdevs.tech" },
-          },
-          {
-            "@type": "FAQPage",
-            mainEntity: SCIENTIFIC_FAQ.map((entry) => ({
-              "@type": "Question",
-              name: entry.question,
-              acceptedAnswer: { "@type": "Answer", text: entry.answer },
-            })),
           },
         ],
       },

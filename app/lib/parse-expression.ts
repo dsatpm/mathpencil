@@ -127,7 +127,7 @@ function tokenize(input: string): Token[] | { message: string } {
     }
 
     if (character === "=") {
-      return { message: "Leave the “=” off — just the sum itself." };
+      return { message: "Leave the “=” off. The sum itself is enough." };
     }
     if (character === "%") {
       return { message: "Percent signs aren’t supported here. Write it as ÷ 100 instead." };

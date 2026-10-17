@@ -268,7 +268,7 @@ function tokenize(input: string): Token[] | { message: string } {
     }
 
     if (character === "=") {
-      return { message: "Leave the “=” off — just the expression itself." };
+      return { message: "Leave the “=” off. The expression itself is enough." };
     }
 
     return { message: `I don’t recognise “${character}” in an expression.` };
