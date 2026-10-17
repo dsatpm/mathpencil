@@ -16,7 +16,10 @@ There is no test runner and no linter in this repo. CI (`.github/workflows/ci.ym
 runs `npm ci`, `npm run typecheck`, `npm run build`, asserts key pages exist, then
 runs `npm run check:build` (`scripts/check-build.mjs`), which reads the built HTML
 for stale links to moved addresses, forwarding pages, sitemap membership, and the
-figures the landing page quotes. Run `npm run typecheck`, `npm run build` and
+figures the landing page quotes. It also runs `.scripts/test-verify-deploy.sh`
+(the deploy scripts' tests). On pushes to `main` a second job, `verify-deploy`,
+waits for the server to publish that commit and smoke-tests the live pages;
+`docs/deploy.md` has the details. Run `npm run typecheck`, `npm run build` and
 `npm run check:build` before committing; a failing build on `main` breaks
 production, because the server pulls and deploys `main` on a timer.
 

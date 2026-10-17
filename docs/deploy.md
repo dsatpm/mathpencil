@@ -59,9 +59,46 @@ broke in practice. Polling needs none of it: no CI key to rotate, no inbound
 port to expose, nothing to un-ban. Latency is the tradeoff: up to two minutes
 between merge and live.
 
-`.github/workflows/ci.yml` still runs on push and PR, but only typechecks and
-builds. It holds no secrets and never touches the server. Because `main` deploys
-automatically, that gate is what keeps a broken build off the box.
+`.github/workflows/ci.yml` runs on push and PR. The `build` job typechecks,
+builds, and runs `.scripts/test-verify-deploy.sh`. It holds no secrets and never
+touches the server. Because `main` deploys automatically, that gate is what
+keeps a broken build off the box.
+
+## Deploy status checks
+
+GitHub never connects to the server, but it can read the public site. Three
+pieces use that:
+
+- **`version.json`.** `deploy.sh` writes `{"commit": "<sha>", "builtAt": "<utc>"}`
+  into `build/client` before the rsync, so the live site reports which commit it
+  is serving: `curl -s https://mathpencil.com/version.json`.
+- **`verify-deploy` job in `ci.yml`.** Runs only on pushes to `main`, after
+  `build` passes. It polls `/version.json` for up to 10 minutes until the live
+  commit is the pushed commit or a descendant of it, then requests `/`,
+  `/tools/`, `/tools/calculator/`, `/tools/scientific/`, `/pre-algebra/`,
+  `/pre-algebra/solver/`, `/pre-algebra/introduction/`, `/contact/` and
+  `/ads.txt` and expects 200 and a `<title>`. The list is `ROUTES` in
+  `.scripts/verify-deploy.sh`; add a path there when a page is added. A red run means the deploy did not land or the site is
+  unhealthy. A newer push cancels the older run; the newer run covers both.
+- **`site-health.yml`.** Every 30 minutes it smoke-tests the pages and, when the
+  tip of `main` is older than 15 minutes, also requires the live site to be at
+  that commit. A failing run emails the repository watchers. GitHub disables
+  scheduled workflows after 60 days without repository activity; re-enable it
+  from the Actions tab if that happens.
+
+`poll-deploy.sh` also compares `version.json` in the webroot to `origin/main`.
+A missing or stale marker triggers a republish, so the site corrects itself if
+the webroot is emptied or a deploy was interrupted. A build that keeps failing
+on the server is therefore retried every two minutes, not once; read the cause
+with `journalctl -u mathpencil-deploy.service`.
+
+Run the same checks by hand:
+
+```bash
+.scripts/verify-deploy.sh                          # smoke test only
+.scripts/verify-deploy.sh --expect-sha "$(git rev-parse origin/main)" --wait 300
+SITE_URL=http://localhost:8080 .scripts/verify-deploy.sh
+```
 
 > `deploy.sh` runs `git reset --hard origin/main`. Any edit made directly on the
 > server inside `/root/projects/mathpencil` is discarded on the next poll. Treat
