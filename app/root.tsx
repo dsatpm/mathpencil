@@ -103,7 +103,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           href="/"
           className="mt-5 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[1.2rem] font-bold uppercase tracking-[0.16em] text-white shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
         >
-          Back to the calculator
+          Back to the home page
         </a>
         {stack && (
           <pre className="mt-6 w-full overflow-x-auto border-t border-ink/20 pt-4 font-mono text-[0.75rem] text-ink-soft">

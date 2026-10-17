@@ -5,9 +5,9 @@ import { NavLink } from "react-router";
  * one is a line rather than a layout change.
  */
 const FOOTER_LINKS: Array<{ to: string; label: string }> = [
-  { to: "/", label: "Calculator" },
-  { to: "/scientific", label: "Scientific" },
+  { to: "/", label: "Home" },
   { to: "/pre-algebra", label: "Pre-algebra" },
+  { to: "/tools", label: "Tools" },
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
   { to: "/contact", label: "Contact" },

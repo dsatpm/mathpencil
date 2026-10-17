@@ -66,3 +66,45 @@ export function socialMeta({
     { name: "twitter:image", content: absoluteUrl("/og.png") },
   ];
 }
+
+export interface Tool {
+  /** Site-root path. */
+  path: string;
+  /** The name a link carries. */
+  name: string;
+  /** What the tool does, in one sentence. */
+  summary: string;
+  /** The rule it follows, which is what sets it apart from the other two. */
+  rule: string;
+}
+
+/**
+ * The instruments, in the order they are listed everywhere.
+ *
+ * Kept here rather than in a page so the header, the footer, the tools page and
+ * the home page link the same paths under the same names. A tool that moves
+ * moves once.
+ */
+export const TOOLS: Tool[] = [
+  {
+    path: "/tools/calculator",
+    name: "Adding machine",
+    summary:
+      "A calculator that prints every entry to a tape, so a long column of figures can be checked line by line after it is added.",
+    rule: "Each operator is applied the moment it is pressed, the way a desk calculator works.",
+  },
+  {
+    path: "/tools/scientific",
+    name: "Scientific calculator",
+    summary:
+      "Trigonometry, logarithms, powers, roots, π and e. The whole expression is built in the window and read back before it is answered.",
+    rule: "Multiplication and division are done before addition and subtraction, the way written math works.",
+  },
+  {
+    path: "/pre-algebra/solver",
+    name: "Equation solver",
+    summary:
+      "Solves an equation with one unknown in exact fractions and writes out every step, so the working can be compared with your own.",
+    rule: "Nothing is rounded. A third stays 1/3 rather than becoming 0.333.",
+  },
+];

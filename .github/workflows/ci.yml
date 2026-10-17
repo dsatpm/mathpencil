@@ -35,13 +35,20 @@ jobs:
 
       # The sitemap is generated from the build output by `postbuild`. It named
       # four URLs by hand once and left out the two pages that matter, so the
-      # count is asserted rather than assumed.
+      # count is asserted rather than assumed. Forwarding pages for moved
+      # addresses carry noindex and are left out, so they are not counted.
       - name: Verify the sitemap covers every page
         run: |
           test -f build/client/sitemap.xml
-          pages=$(find build/client -name index.html | wc -l)
+          pages=$(find build/client -name index.html -exec grep -L '<meta name="robots" content="noindex' {} + | wc -l)
           urls=$(grep -c '<loc>' build/client/sitemap.xml)
-          echo "$pages pages, $urls sitemap URLs"
+          echo "$pages indexable pages, $urls sitemap URLs"
           test "$pages" -eq "$urls"
-          grep -q '<loc>https://mathpencil.com/scientific</loc>' build/client/sitemap.xml
+          grep -q '<loc>https://mathpencil.com/tools/scientific</loc>' build/client/sitemap.xml
           grep -q '<loc>https://mathpencil.com/pre-algebra</loc>' build/client/sitemap.xml
+          ! grep -q '<loc>https://mathpencil.com/scientific</loc>' build/client/sitemap.xml
+
+      # The landing page, the moved tools, the forwarding pages and the links
+      # between them. See scripts/check-build.mjs for each check.
+      - name: Check the built site
+        run: npm run check:build

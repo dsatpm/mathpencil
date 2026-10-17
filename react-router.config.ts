@@ -9,6 +9,11 @@ import type { Config } from "@react-router/dev/config";
  */
 export const STATIC_ROUTES = [
   "/",
+  "/tools",
+  "/tools/calculator",
+  "/tools/scientific",
+  // Moved to /tools/scientific. Still built, as a forwarding page marked
+  // noindex, so an old link or bookmark never lands on a 404.
   "/scientific",
   "/pre-algebra",
   "/pre-algebra/solver",

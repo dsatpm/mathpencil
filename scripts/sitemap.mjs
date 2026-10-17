@@ -25,7 +25,7 @@ const SITE_URL = "https://mathpencil.com";
 /** How often each kind of page changes, and how it ranks against the others. */
 const RULES = [
   { match: (path) => path === "/", changefreq: "monthly", priority: "1.0" },
-  { match: (path) => path === "/scientific", changefreq: "monthly", priority: "0.9" },
+  { match: (path) => path === "/tools" || path.startsWith("/tools/"), changefreq: "monthly", priority: "0.9" },
   { match: (path) => path === "/pre-algebra", changefreq: "monthly", priority: "0.9" },
   { match: (path) => path.startsWith("/pre-algebra/"), changefreq: "monthly", priority: "0.8" },
   { match: () => true, changefreq: "yearly", priority: "0.3" },

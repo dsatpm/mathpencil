@@ -141,12 +141,12 @@ export default function PreAlgebraSolverPage() {
             </h2>
             <p className={BODY}>
               For roots, powers and trigonometry there is the{" "}
-              <Link to="/scientific" className={LINK}>
+              <Link to="/tools/scientific" className={LINK}>
                 scientific calculator
               </Link>
               , which applies the order of operations. For a running total that prints to a
               tape, the{" "}
-              <Link to="/" className={LINK}>
+              <Link to="/tools/calculator" className={LINK}>
                 adding machine
               </Link>
               . To learn the method rather than check it, the{" "}

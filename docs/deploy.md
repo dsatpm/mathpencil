@@ -9,7 +9,9 @@ be discovered: it maps the `CHAPTERS` array to paths. `npm run build` writes rea
 HTML to `build/client`:
 
 ```
-build/client/index.html                       # /
+build/client/index.html                       # / (the landing page)
+build/client/tools/index.html                 # /tools; the calculators are under it
+build/client/scientific/index.html            # forwarding page to /tools/scientific (noindex)
 build/client/contact/index.html               # /contact
 build/client/pre-algebra/index.html           # the course hub
 build/client/pre-algebra/solver/index.html    # the solver
@@ -147,6 +149,24 @@ location ~* \.html$ {
 }
 ```
 
+### Moved addresses
+
+The scientific calculator moved from `/scientific` to `/tools/scientific` in
+1.4.0. The build still writes a `noindex` forwarding page at `/scientific`, so an
+old link works with no server change. A 301 is still the better answer: search
+engines move the old address's ranking to the new one, and the visitor skips a
+page load. Add this inside the `server` block, above `location /`:
+
+```nginx
+# Moved in 1.4.0. Keep the query string; the browser keeps the #anchor itself.
+location ~ ^/scientific/?$ {
+    return 301 /tools/scientific$is_args$args;
+}
+```
+
+The old `/` calculator needs no rule: `/` is now the landing page, which links
+to `/tools/calculator`.
+
 `try_files $uri /index.html` is **not** sufficient — it never resolves
 `/contact/index.html`, and when `index.html` is absent it produces an internal
 redirect cycle that nginx reports as a 500.
@@ -163,9 +183,13 @@ nginx -t && systemctl reload nginx
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com/contact
 curl -sS https://mathpencil.com | grep -o '<title>[^<]*</title>'
+curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' https://mathpencil.com/scientific
 ```
 
-Both should be `200`. The webroot should contain `index.html`, `contact/` and
+The last should print `301 https://mathpencil.com/tools/scientific` once the
+moved-address rule is in. Before it is, it prints `200` (the forwarding page).
+
+The first two should be `200`. The webroot should contain `index.html`, `contact/` and
 `assets/` — if you see `client/` and `server/` in there, something copied
 `build/` instead of `build/client/`.
 

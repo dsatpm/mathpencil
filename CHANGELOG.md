@@ -4,6 +4,38 @@ What changed in MathPencil, newest first. Dates are the day the work landed on
 `main`. Versions follow [semantic versioning](https://semver.org): the first
 number is a rewrite, the second is a new thing you can use, the third is a fix.
 
+## 1.4.0 (unreleased)
+
+The home page becomes a landing page for the course and the tools, and the two
+calculators move under `/tools`.
+
+### Added
+
+- **A landing page at `/`.** It says what MathPencil is, how a chapter teaches,
+  and why the calculators give different answers to the same keys, then points to
+  chapter 1. Every figure on it is worked out by the real engines when the page is
+  built, and every passage it quotes is read from the course data, so it cannot
+  disagree with the rest of the site.
+- **`/tools`, a page for the three instruments.** The adding machine, the
+  scientific calculator and the equation solver, each shown working the same kind
+  of sum it is built for, with the rule it follows.
+- **A build check, `npm run check:build`.** It reads the built HTML for links
+  to moved addresses, missing forwarding pages, sitemap entries that should or
+  should not be there, and the figures the landing page quotes. CI runs it.
+
+### Changed
+
+- **The adding machine is at `/tools/calculator`** and the scientific calculator
+  is at `/tools/scientific`. The header links Pre-algebra, Tools and Contact.
+- Every link to the old addresses, including the course's "where this leads"
+  links, points at the new ones.
+
+### Moved
+
+- **`/scientific` forwards to `/tools/scientific`.** The page is still built,
+  marked `noindex` and left out of the sitemap, and it carries the query and
+  anchor across. `docs/deploy.md` has the nginx 301 that replaces it.
+
 ## 1.3.0 (22 September 2026)
 
 The pre-algebra lesson becomes a course. One long page is now twelve chapters,
