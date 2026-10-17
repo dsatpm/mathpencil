@@ -1,7 +1,9 @@
 name: CI
 
 # The server polls origin/main and deploys whatever it finds, so main must
-# always build. This gate needs no secrets and never touches the server.
+# always build. The build job needs no secrets and never touches the server.
+# The verify-deploy job only reads the public site: it waits for the server's
+# poll to publish the pushed commit, then smoke-tests the pages.
 on:
   push:
     branches: ["main"]
@@ -22,3 +24,23 @@ jobs:
       - run: npm run build
       - name: Verify the build pre-rendered real HTML
         run: test -f build/client/index.html && test -f build/client/contact/index.html
+      - name: Test the deploy scripts
+        run: .scripts/test-verify-deploy.sh
+
+  verify-deploy:
+    # Deploy status for this push, not for pull requests: a PR deploys nothing.
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # A newer push supersedes this one. The newer run's check also passes for
+    # this commit, because the live commit only needs to descend from it.
+    concurrency:
+      group: verify-deploy
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Wait for the server to publish this commit, then smoke-test it
+        run: .scripts/verify-deploy.sh --expect-sha "$GITHUB_SHA" --wait 600
