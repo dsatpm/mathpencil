@@ -27,7 +27,7 @@ npm run start       # serve the production build
 | --- | --- | --- |
 | `/` | A printing adding machine. Every entry prints to a tape, the total is struck in ribbon red. | Immediate execution, like a physical keypad |
 | `/scientific` | An engineer's calculator. The keys build a whole expression in a liquid-crystal window. | Operator precedence, brackets, powers |
-| `/pre-algebra` | A lesson, with a solver on two chalkboards. | Exact fractions, one unknown |
+| `/pre-algebra` | A course in twelve chapters, with a solver on two chalkboards. | Exact fractions, one unknown |
 
 They disagree on purpose. `2 + 3 × 4` is 20 on the home page, because a printing
 machine resolves each operator as it is pressed and the tape shows exactly that
@@ -45,12 +45,14 @@ cool grid paper with a chalkboard for the working.
 ```
 app/
 ├── root.tsx                    # document shell, fonts, AdSense loader
-├── routes.ts                   # /, /scientific, /pre-algebra, /contact, /privacy, /terms
+├── routes.ts                   # /, /scientific, /pre-algebra and its chapters, /contact, /privacy, /terms
 ├── app.css                     # theme tokens for all three instruments, fonts, animations
 ├── routes/
 │   ├── home.tsx                # the adding machine on its desk, then the notes
 │   ├── scientific.tsx          # the scientific calculator, then its notes
-│   ├── pre-algebra.tsx         # the lesson: contents gutter and eight sections
+│   ├── pre-algebra.tsx         # the course hub: the twelve chapters, and nothing they hold
+│   ├── pre-algebra.chapter.tsx # one module, twelve chapter pages, at /pre-algebra/<slug>
+│   ├── pre-algebra.solver.tsx  # the solver on a page of its own
 │   ├── contact.tsx
 │   ├── privacy.tsx             # privacy policy
 │   └── terms.tsx               # terms of use
@@ -75,17 +77,27 @@ app/
 │   ├── ScientificNotes.tsx     # how to work it, every key, FAQ
 │   │
 │   ├── OnThisPage.tsx          # the contents chalkboard; crosses off as you scroll
+│   ├── ChapterNav.tsx          # the chapter board: the course, then this page's sections
+│   ├── Breadcrumbs.tsx         # the trail; the same array feeds the BreadcrumbList
+│   ├── ChapterPager.tsx        # previous and next, at the foot of a chapter
 │   └── PreAlgebraSolver.tsx    # the two boards: solve, and evaluate
+├── hooks/
+│   └── useSectionSpy.ts        # which section you are in; both contents lists use it
 ├── data/
-│   ├── pre-algebra.json        # source content, and the reading level it sets
-│   └── pre-algebra.ts          # that content as typed objects the page renders
+│   ├── pre-algebra.json        # the upstream content record, not imported anywhere
+│   └── pre-algebra.ts          # CHAPTERS: the whole course as typed objects
 └── lib/
     ├── calc-engine.ts          # the adding machine's state machine
     ├── parse-expression.ts     # the docket's parser
     ├── sci-engine.ts           # the scientific calculator's state machine
     ├── parse-scientific.ts     # functions, powers, constants, angle modes
     ├── linear-solver.ts        # exact fractions, one unknown, working shown
+    ├── pre-algebra-style.ts    # the class strings the course pages share
+    ├── site.ts                 # absolute URLs, and the shared meta() tags
     └── format.ts               # how numbers are printed
+
+scripts/
+└── sitemap.mjs                 # postbuild; writes the sitemap from what was built
 ```
 
 Every parser here is written by hand. None of them call `eval` or
@@ -155,11 +167,17 @@ FAQ array is exported and fed straight into that page's `FAQPage` structured
 data, so the markup a crawler reads can never drift from the text a visitor
 reads.
 
-`/pre-algebra` is written from `app/data/pre-algebra.json`, which also sets the
-reading level: a junior high student taking the class for the first time.
-`pre-algebra.ts` is that content as typed objects. Adding a topic is one entry
-in `TOPICS`; the contents chalkboard, the count in the introduction and the
-page's structured data all follow from the same arrays.
+`/pre-algebra` is a course in twelve chapters. The hub lists them; each chapter
+is its own page at `/pre-algebra/<slug>`, and the lessons inside a chapter are
+sections of that page rather than pages of their own. The solver has a page at
+`/pre-algebra/solver` and is mounted again inside the chapter on equations.
+
+The whole course is `app/data/pre-algebra.ts`, in one `CHAPTERS` array, written
+for a junior high student taking the class for the first time. Adding a chapter
+is one object: the hub grid, the chapter board, previous and next, the list of
+pages the build prerenders, the sitemap and the structured data all follow from
+it. Topics, formulas, vocabulary and worked examples each belong to exactly one
+chapter, and the hub does not restate any of them.
 
 `/privacy` and `/terms` are plain prerendered pages on the same paper. Both
 carry an `EFFECTIVE` constant at the top; change the text, change the date.

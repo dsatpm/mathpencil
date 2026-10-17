@@ -3,15 +3,26 @@
 ## How it works
 
 `mathpencil.com` is a **pre-rendered static site**. No route uses a `loader` or
-`action`, so `react-router.config.ts` sets `ssr: false` with `prerender: true`.
-`npm run build` writes real HTML to `build/client`:
+`action`, so `react-router.config.ts` sets `ssr: false`. `prerender` is a function
+there, not `true`, because `/pre-algebra/:slug` carries a param and a param cannot
+be discovered: it maps the `CHAPTERS` array to paths. `npm run build` writes real
+HTML to `build/client`:
 
 ```
-build/client/index.html           # /
-build/client/contact/index.html   # /contact
-build/client/__spa-fallback.html  # client-side fallback
-build/client/assets/...           # hashed JS + CSS
+build/client/index.html                       # /
+build/client/contact/index.html               # /contact
+build/client/pre-algebra/index.html           # the course hub
+build/client/pre-algebra/solver/index.html    # the solver
+build/client/pre-algebra/number-theory/...    # one directory per chapter
+build/client/sitemap.xml                      # written by postbuild, not by hand
+build/client/__spa-fallback.html              # client-side fallback
+build/client/assets/...                       # hashed JS + CSS
 ```
+
+`npm run build` also runs `scripts/sitemap.mjs` through npm's `postbuild` hook. It
+walks `build/client` for `index.html` files and writes `sitemap.xml` from what it
+finds, so the sitemap is whatever shipped. There is no `public/sitemap.xml` to keep
+in step, and nothing extra to run on the server.
 
 nginx serves that directory directly. There is no Node process in production,
 nothing to keep alive, and no `proxy_pass`.
