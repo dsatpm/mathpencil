@@ -14,7 +14,11 @@ npm run start      # serve the production build
 
 There is no test runner and no linter in this repo. CI (`.github/workflows/ci.yml`)
 runs `npm ci`, `npm run typecheck`, `npm run build`, then asserts
-`build/client/index.html` and `build/client/contact/index.html` exist. Run
+`build/client/index.html` and `build/client/contact/index.html` exist, and runs
+`.scripts/test-verify-deploy.sh`, the only test suite here (it covers the deploy
+scripts). On pushes to `main` a second job, `verify-deploy`, waits for the server
+to publish that commit and smoke-tests the live pages; `docs/deploy.md` has the
+details. Run
 `npm run typecheck` and `npm run build` before committing; a failing build on
 `main` breaks production, because the server pulls and deploys `main` on a timer.
 

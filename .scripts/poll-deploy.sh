@@ -16,13 +16,19 @@ git fetch --quiet origin main
 LOCAL="$(git rev-parse HEAD)"
 REMOTE="$(git rev-parse origin/main)"
 
-if [ "$LOCAL" = "$REMOTE" ] && [ -f "$WEBROOT/index.html" ]; then
+# The published site must carry the marker for this exact commit. That also
+# covers a webroot emptied by hand and the first run after version.json was
+# introduced, when the previous deploy.sh published without it.
+PUBLISHED=""
+[ -f "$WEBROOT/version.json" ] && PUBLISHED="$(grep -o "\"commit\":\"$REMOTE\"" "$WEBROOT/version.json" || true)"
+
+if [ "$LOCAL" = "$REMOTE" ] && [ -f "$WEBROOT/index.html" ] && [ -n "$PUBLISHED" ]; then
   echo "Already at ${REMOTE:0:7}, site published. Nothing to do."
   exit 0
 fi
 
 if [ "$LOCAL" = "$REMOTE" ]; then
-  echo "At ${REMOTE:0:7} but ${WEBROOT}/index.html is missing — republishing."
+  echo "At ${REMOTE:0:7} but ${WEBROOT} is missing index.html or a matching version.json — republishing."
 else
   echo "New commit: ${LOCAL:0:7} -> ${REMOTE:0:7}"
 fi

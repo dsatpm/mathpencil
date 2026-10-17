@@ -46,6 +46,11 @@ if [ ! -f build/client/index.html ]; then
   exit 1
 fi
 
+# Marker that lets CI (and anyone with curl) ask the live site which commit it
+# is serving. Written into build/client so rsync --delete cannot remove it.
+printf '{"commit":"%s","builtAt":"%s"}\n' \
+  "$(git rev-parse HEAD)" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > build/client/version.json
+
 echo "Publishing build/client to ${WEBROOT}"
 $SUDO mkdir -p "$WEBROOT"
 $SUDO rsync -a --delete build/client/ "$WEBROOT/"

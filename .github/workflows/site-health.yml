@@ -1,0 +1,33 @@
+name: Site health
+
+# Catches what a push-time check cannot: the server dying, a deploy that was
+# never picked up, or nginx serving errors hours after the last merge. A failed
+# run emails the repository's watchers.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Smoke-test the pages and check the live commit is current
+        run: |
+          # A commit younger than the polling window may legitimately not be
+          # live yet. The push-time check owns that case.
+          age=$(( $(date +%s) - $(git log -1 --format=%ct HEAD) ))
+          if [ "$age" -gt 900 ]; then
+            .scripts/verify-deploy.sh --expect-sha "$(git rev-parse HEAD)" --wait 0
+          else
+            echo "main is ${age}s old, inside the deploy window: smoke test only."
+            .scripts/verify-deploy.sh
+          fi
