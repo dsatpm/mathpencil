@@ -51,7 +51,7 @@ export default function Privacy() {
           </h1>
 
           <p className={BODY}>
-            MathPencil is a calculator, published at{" "}
+            MathPencil is a free pre-algebra course and a set of calculators, published at{" "}
             <a href="/" className={LINK}>
               mathpencil.com
             </a>{" "}
@@ -187,7 +187,7 @@ export default function Privacy() {
             href="/"
             className="mt-8 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[1.2rem] font-bold uppercase tracking-[0.16em] text-white no-underline shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
           >
-            Back to the calculator
+            Back to the home page
           </a>
         </PaperSheet>
       </main>

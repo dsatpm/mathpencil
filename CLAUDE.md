@@ -13,14 +13,15 @@ npm run start      # serve the production build
 ```
 
 There is no test runner and no linter in this repo. CI (`.github/workflows/ci.yml`)
-runs `npm ci`, `npm run typecheck`, `npm run build`, then asserts
-`build/client/index.html` and `build/client/contact/index.html` exist, and runs
-`.scripts/test-verify-deploy.sh`, the only test suite here (it covers the deploy
-scripts). On pushes to `main` a second job, `verify-deploy`, waits for the server
-to publish that commit and smoke-tests the live pages; `docs/deploy.md` has the
-details. Run
-`npm run typecheck` and `npm run build` before committing; a failing build on
-`main` breaks production, because the server pulls and deploys `main` on a timer.
+runs `npm ci`, `npm run typecheck`, `npm run build`, asserts key pages exist, then
+runs `npm run check:build` (`scripts/check-build.mjs`), which reads the built HTML
+for stale links to moved addresses, forwarding pages, sitemap membership, and the
+figures the landing page quotes. It also runs `.scripts/test-verify-deploy.sh`
+(the deploy scripts' tests). On pushes to `main` a second job, `verify-deploy`,
+waits for the server to publish that commit and smoke-tests the live pages;
+`docs/deploy.md` has the details. Run `npm run typecheck`, `npm run build` and
+`npm run check:build` before committing; a failing build on `main` breaks
+production, because the server pulls and deploys `main` on a timer.
 
 `npm run typecheck` regenerates `.react-router/types`. Route modules import their
 own generated types (`import type { Route } from "./+types/home"`), so a new route
@@ -29,13 +30,41 @@ will not typecheck until typegen has run.
 ## Architecture
 
 React Router 8 in framework mode, **prerendered, not server-rendered**.
-`react-router.config.ts` sets `ssr: false, prerender: true` because no route uses a
-`loader` or `action`. The build emits static HTML that nginx serves directly — there
-is no Node process in production. Adding a `loader` or `action` to any route breaks
-that assumption and the deployment model; do not add one without changing
+`react-router.config.ts` sets `ssr: false` because no route uses a `loader` or
+`action`. The build emits static HTML that nginx serves directly — there is no Node
+process in production. Adding a `loader` or `action` to any route breaks that
+assumption and the deployment model; do not add one without changing
 `react-router.config.ts` and `docs/deploy.md` together.
 
 Routes are declared explicitly in `app/routes.ts` (no file-system routing).
+
+`prerender` is a function, not `true`. `/pre-algebra/:slug` carries a param, and a
+param cannot be discovered, so the config imports `CHAPTERS` and maps it to paths.
+A chapter added to that array gets a page with no further wiring. `STATIC_ROUTES` in
+the same file lists everything without a param. **A route missing from both lists is
+never built**, and CI asserts the course pages and the sitemap count.
+
+### The landing page and moved addresses
+
+`/` (`routes/home.tsx`) is the landing page: the course and the tools, not an
+instrument. It quotes figures (`2 + 3 × 4` is 20 and 14, solver working) and course
+passages, and **none of them are typed in**: `components/ToolPreviews.tsx` runs the
+real engines at render time and the page reads chapter text from `CHAPTERS`, so the
+home page cannot claim an answer the site does not give. A preview helper throws on
+an input its engine rejects, which fails the build. Keep it that way when adding a
+figure.
+
+Scroll motion is GSAP (`hooks/useLandingMotion.ts`), home page only, all inside a
+`prefers-reduced-motion: no-preference` query. Content is in its finished state
+before the script runs.
+
+The calculators moved from `/` and `/scientific` to `/tools/calculator` and
+`/tools/scientific`. `/scientific` is still prerendered by `routes/redirect.tsx` as
+a `noindex` forwarding page. Moving another address: add it to `LEGACY_REDIRECTS`
+there, to `MOVED` in `scripts/check-build.mjs`, as a route in `routes.ts`, to
+`STATIC_ROUTES`, and as a 301 in the nginx block in `docs/deploy.md`.
+
+Tool names, paths and one-line summaries live once in `TOOLS` in `app/lib/site.ts`.
 
 ### The three instruments
 
@@ -45,15 +74,15 @@ driven by presentational components in `app/components/`:
 
 | Page | Engine | Semantics |
 | --- | --- | --- |
-| `/` | `calc-engine.ts` (reducer), `parse-expression.ts` (the paste-a-sum docket) | Immediate execution. `2 + 3 × 4` is **20** |
-| `/scientific` | `sci-engine.ts` (reducer), `parse-scientific.ts` | Operator precedence. `2 + 3 × 4` is **14** |
-| `/pre-algebra` | `linear-solver.ts` | Exact fractions, one unknown, every step shown |
+| `/tools/calculator` | `calc-engine.ts` (reducer), `parse-expression.ts` (the paste-a-sum docket) | Immediate execution. `2 + 3 × 4` is **20** |
+| `/tools/scientific` | `sci-engine.ts` (reducer), `parse-scientific.ts` | Operator precedence. `2 + 3 × 4` is **14** |
+| `/pre-algebra/solver` | `linear-solver.ts` | Exact fractions, one unknown, every step shown |
 
 That disagreement is a design decision, not a bug. A printing adding machine
 resolves each operator as it is pressed, and the tape prints exactly that route; a
 keypad that silently applied precedence would contradict the tape above it. `%`
-differs the same way: on `/` it converts and reads as a percentage *of* the running
-total after `+`/`-`; on `/scientific` it only divides by a hundred. Before
+differs the same way: on `/tools/calculator` it converts and reads as a percentage *of* the running
+total after `+`/`-`; on `/tools/scientific` it only divides by a hundred. Before
 "fixing" an arithmetic difference between the two pages, check the README section
 that documents it.
 
@@ -67,12 +96,32 @@ The engines are pure: `(state, action) => state`, formatting delegated to
 read `event.code`, not `event.key`, so the number pad keeps working with Num Lock
 off.
 
+### The pre-algebra course
+
+`/pre-algebra` is a hub listing twelve chapters. Each chapter is a page at
+`/pre-algebra/<slug>`, all twelve rendered by the single route module
+`routes/pre-algebra.chapter.tsx`, and the solver has its own page at
+`/pre-algebra/solver`.
+
+Lessons are **sections within a chapter**, not separate URLs. Keep it that way: the
+split exists so each page carries enough to stand on its own, and a page per lesson
+would undo that.
+
+The hub holds the contents and nothing a chapter holds. Topics, formulas, vocabulary
+and worked examples each live on exactly one chapter. **Do not restate chapter
+content on the hub** — a hub that repeats its children competes with them.
+
 ### Content as data
 
-`/pre-algebra` renders from `app/data/pre-algebra.json` → `app/data/pre-algebra.ts`
-(typed objects). Adding a topic is one entry in `TOPICS`; the contents chalkboard,
-the count in the introduction, and the page's structured data all derive from the
-same arrays.
+The whole course is `app/data/pre-algebra.ts` → the `CHAPTERS` array. Adding a
+chapter is one object; the hub grid, the chapter board, prev/next, the prerender
+list, the sitemap and the structured data all follow from it. Each section names a
+`kind`, and `SectionBody` in the chapter route maps a kind to a block — a new kind
+needs a case there, or TypeScript will say so.
+
+`app/data/pre-algebra.json` is the upstream content record and is still shaped as one
+flat lesson. **`.ts` is authoritative**; the JSON is not imported anywhere and is
+restructured to mirror it in the content pass.
 
 Each notes component (`MachineNotes.tsx`, `ScientificNotes.tsx`) exports its FAQ
 array, and the route feeds that same array into its `FAQPage` JSON-LD. Markup a
@@ -83,8 +132,17 @@ editing FAQ copy.
 
 Every route exports `meta()` with canonical, Open Graph, Twitter, and JSON-LD
 entries built from `absoluteUrl()` in `app/lib/site.ts`. Crawlers fetch these with no
-idea what host they came from, so all URLs are absolute. Copy `routes/home.tsx`'s
-`meta()` shape for a new page.
+idea what host they came from, so all URLs are absolute.
+
+`socialMeta()` in `app/lib/site.ts` returns the title, description, canonical and
+card tags. Spread it, then append the page's own JSON-LD. Titles and descriptions are
+**written per page**, never templated from a pattern: a templated description gets
+rewritten by Google and the slot is wasted. Chapter ones live on the chapter object
+as `metaTitle` and `metaDescription`.
+
+`public/sitemap.xml` no longer exists. `scripts/sitemap.mjs` runs as `postbuild` and
+writes `build/client/sitemap.xml` by walking the build output for `index.html` files,
+so it cannot disagree with what shipped. It skips anything carrying `noindex`.
 
 ### Styling
 
@@ -108,8 +166,8 @@ this yet.
 - State facts; do not assume what the reader knows, feels, or has already tried.
 - Nothing condescending, no "simply", "just", "obviously", "easy".
 - No em dashes anywhere a visitor can read. Commas, colons and full stops instead.
-- Explain the mechanism, not only the result. `/pre-algebra` is pitched at a junior
-  high student taking the class for the first time (set in `pre-algebra.json`).
+- Explain the mechanism, not only the result. The pre-algebra course is pitched at a
+  junior high student taking the class for the first time.
 
 ## Interface house rules
 

@@ -4,6 +4,83 @@ What changed in MathPencil, newest first. Dates are the day the work landed on
 `main`. Versions follow [semantic versioning](https://semver.org): the first
 number is a rewrite, the second is a new thing you can use, the third is a fix.
 
+## 1.4.0 (unreleased)
+
+The home page becomes a landing page for the course and the tools, and the two
+calculators move under `/tools`.
+
+### Added
+
+- **A landing page at `/`.** It says what MathPencil is, how a chapter teaches,
+  and why the calculators give different answers to the same keys, then points to
+  chapter 1. Every figure on it is worked out by the real engines when the page is
+  built, and every passage it quotes is read from the course data, so it cannot
+  disagree with the rest of the site.
+- **`/tools`, a page for the three instruments.** The adding machine, the
+  scientific calculator and the equation solver, each shown working the same kind
+  of sum it is built for, with the rule it follows.
+- **A build check, `npm run check:build`.** It reads the built HTML for links
+  to moved addresses, missing forwarding pages, sitemap entries that should or
+  should not be there, and the figures the landing page quotes. CI runs it.
+
+### Changed
+
+- **The adding machine is at `/tools/calculator`** and the scientific calculator
+  is at `/tools/scientific`. The header links Pre-algebra, Tools and Contact.
+- Every link to the old addresses, including the course's "where this leads"
+  links, points at the new ones.
+
+### Moved
+
+- **`/scientific` forwards to `/tools/scientific`.** The page is still built,
+  marked `noindex` and left out of the sitemap, and it carries the query and
+  anchor across. `docs/deploy.md` has the nginx 301 that replaces it.
+
+## 1.3.0 (22 September 2026)
+
+The pre-algebra lesson becomes a course. One long page is now twelve chapters,
+each at its own address, with four subjects the lesson never covered.
+
+### Added
+
+- **Twelve chapter pages under `/pre-algebra/`.** Introducing pre-algebra,
+  integers and negative numbers, order of operations, number theory, factors and
+  multiples, fractions decimals and percents, ratios and proportions,
+  expressions variables and equations, inequalities and one-step equations,
+  exponents and square roots, probability and statistics, and geometry and
+  measurement. Each one opens with what the chapter is for, then the facts, then
+  the examples worked line by line.
+- **Four subjects that were missing.** Integers and negative numbers, order of
+  operations, inequalities and one-step equations, and probability and
+  statistics. Between them they cover why subtracting a negative number adds,
+  why `2 + 3 × 4` is 14 in written arithmetic, when an inequality sign has to
+  flip, and how to find a mean, a median, a mode and a range.
+- **A chapter board in the left gutter.** It lists the whole course and marks
+  where you are, crossing off the chapters behind you in chalk, and below that
+  lists the sections of the chapter you are reading. Previous and next links sit
+  at the foot of every chapter, and a breadcrumb trail above every title.
+- **The solver on its own page, at `/pre-algebra/solver`.** It says what it
+  solves, what it turns down and why, and why the answers stay as fractions. The
+  same two boards still sit inside the chapter on equations.
+- **Where this leads.** Chapters now point at the pages that follow from them,
+  including both calculators: the chapter on order of operations explains why the
+  adding machine and the scientific calculator give different answers to the same
+  keys.
+
+### Changed
+
+- **`/pre-algebra` is now the course contents.** It lists the twelve chapters and
+  no longer repeats what they hold. The topics, formulas, key words and worked
+  examples that were on it have moved to the chapter each belongs to.
+- Every page carries its own title and description, written for that page.
+
+### Fixed
+
+- **The sitemap was missing `/pre-algebra` and `/scientific`.** It listed four
+  URLs and left out the two pages the site is for. It is now generated from the
+  pages the build actually produced, so it cannot fall behind again, and CI fails
+  if the two disagree.
+
 ## 1.2.0 (21 September 2026)
 
 A lesson, not just a calculator. MathPencil now teaches the subject as well as

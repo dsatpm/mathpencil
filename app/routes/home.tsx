@@ -1,54 +1,53 @@
+import { useRef, useState } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/home";
-import { AddingMachine } from "../components/AddingMachine";
-import { MachineNotes } from "../components/MachineNotes";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
-import { absoluteUrl, SITE_NAME } from "../lib/site";
+import {
+  BoardPreview,
+  LcdPreview,
+  scientificAnswer,
+  solvedFor,
+  tapeTotal,
+  TapePreview,
+} from "../components/ToolPreviews";
+import { CHAPTERS, chapterBySlug } from "../data/pre-algebra";
+import { useLandingMotion } from "../hooks/useLandingMotion";
+import { formatFraction } from "../lib/linear-solver";
+import { absoluteUrl, PUBLISHER, SITE_NAME, socialMeta, TOOLS } from "../lib/site";
 
-const TITLE = "MathPencil: a simple calculator for quick calculations";
+const TITLE = "MathPencil: free pre-algebra lessons and calculators that show their working";
 const DESCRIPTION =
-  "A calculator that prints its working to a tape, plus a field for pasting a sum that is already written down. Works with a mouse, a keyboard, or a number pad.";
+  "A free twelve-chapter pre-algebra course that explains why each rule works, plus an adding machine, a scientific calculator and an equation solver that show every step.";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: TITLE },
-    { name: "description", content: DESCRIPTION },
-    // Share cards and canonicals are fetched by machines that have no idea
-    // what host they came from, so every URL here is absolute.
-    { tagName: "link", rel: "canonical", href: absoluteUrl("/") },
-    { property: "og:site_name", content: SITE_NAME },
-    { property: "og:title", content: TITLE },
-    { property: "og:description", content: DESCRIPTION },
-    { property: "og:type", content: "website" },
-    { property: "og:url", content: absoluteUrl("/") },
-    { property: "og:image", content: absoluteUrl("/og.png") },
-    { property: "og:image:width", content: "1200" },
-    { property: "og:image:height", content: "630" },
-    { property: "og:image:alt", content: "The MathPencil wordmark" },
-    // 1200×630 is the size a large card wants; the small wordmark would have
-    // been letterboxed or rejected.
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: TITLE },
-    { name: "twitter:description", content: DESCRIPTION },
-    { name: "twitter:image", content: absoluteUrl("/og.png") },
-    // What the page is, said in the form a crawler parses rather than reads.
-    // The questions are the same objects the page renders, so the markup can
-    // never drift from the visible text.
+    ...socialMeta({ title: TITLE, description: DESCRIPTION, path: "/", type: "website" }),
     {
       "script:ld+json": {
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "WebApplication",
+            "@type": "WebSite",
             name: SITE_NAME,
             url: absoluteUrl("/"),
-            applicationCategory: "UtilitiesApplication",
-            operatingSystem: "Any browser",
             description: DESCRIPTION,
-            isAccessibleForFree: true,
-            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-            publisher: { "@type": "Organization", name: "HTPdevs", url: "https://htpdevs.tech" },
+            inLanguage: "en",
+            publisher: PUBLISHER,
+          },
+          {
+            "@type": "ItemList",
+            name: "What MathPencil offers",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Pre-algebra course", url: absoluteUrl("/pre-algebra") },
+              ...TOOLS.map((tool, index) => ({
+                "@type": "ListItem",
+                position: index + 2,
+                name: tool.name,
+                url: absoluteUrl(tool.path),
+              })),
+            ],
           },
         ],
       },
@@ -56,39 +55,633 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
+/* --- What the page quotes ------------------------------------------------
+   Every sum and every passage below is pulled from the engines or the course
+   data rather than typed again here, so the home page cannot promise an answer
+   or a sentence the rest of the site does not give.
+------------------------------------------------------------------------- */
+
+const FIRST = CHAPTERS[0];
+const LAST = CHAPTERS[CHAPTERS.length - 1];
+const FIRST_CHAPTER_PATH = `/pre-algebra/${FIRST.slug}`;
+
+/** A chapter the page quotes. Throws at build time if the slug is renamed. */
+function quotedChapter(slug: string) {
+  const chapter = chapterBySlug(slug);
+  if (!chapter) throw new Error(`The home page quotes a chapter that does not exist: ${slug}`);
+  return chapter;
+}
+
+const ORDER_CHAPTER = quotedChapter("order-of-operations");
+const INTEGERS_CHAPTER = quotedChapter("integers-and-negative-numbers");
+const INTEGERS_EXAMPLE = INTEGERS_CHAPTER.examples?.[0];
+
+const HERO_EQUATION = "3x + 5 = 20";
+const BOARD_EQUATION = "5x - 7 = 2x + 8";
+const SUM_KEYS = "2 + 3 × 4 =";
+const SUM_EXPRESSION = "2+3×4";
+const EXACT_EQUATION = "x + 1/3 = 1";
+
+const BUTTON_PRIMARY =
+  "inline-flex items-center justify-center rounded-sm bg-key-act px-6 py-3.5 font-sans text-[1rem] font-bold uppercase tracking-[0.14em] text-white no-underline shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear hover:brightness-105 active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]";
+
+const BUTTON_SECONDARY =
+  "inline-flex items-center justify-center rounded-sm border border-tape/45 px-6 py-3.5 font-sans text-[1rem] font-bold uppercase tracking-[0.14em] text-tape no-underline transition-colors duration-150 hover:border-tape hover:bg-tape/8";
+
+/** Section spacing: each block is a separate stop, not a continuation of the last. */
+const SECTION = "relative px-4 py-24 sm:px-6 md:py-36";
+
+/* --- Pieces -------------------------------------------------------------- */
+
+/**
+ * A page from the exercise book with a solution written out in biro.
+ *
+ * The working is the solver's, so the steps a visitor sees here are the steps
+ * the solver prints when they type the same equation.
+ */
+function ExerciseSheet({ equation }: { equation: string }) {
+  const solved = solvedFor(equation);
+
   return (
-    <div className="flex min-h-dvh w-full flex-col bg-desk-deep">
+    <figure className="on-grid grid-paper w-full max-w-88 rotate-[-2.5deg] border border-pa-paper-edge bg-pa-paper px-6 pb-6 pt-5 shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)]">
+      <figcaption className="font-sans text-[0.78rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
+        Solve {equation}
+      </figcaption>
+      <ol className="mt-3 list-none space-y-2 p-0 font-mono text-pa-biro">
+        {solved.steps.map((step) => (
+          <li key={`${step.instruction}-${step.equation}`}>
+            <span className="block font-sans text-[0.78rem] text-pa-ink-soft">{step.instruction}</span>
+            <span className="text-[1.15rem]">{step.equation}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-4 inline-block rounded-full border-2 border-pa-mark px-3 py-0.5 font-mono text-[1.25rem] text-pa-mark">
+        {solved.answer}
+      </p>
+    </figure>
+  );
+}
+
+/** A small swatch of one of the site's surfaces, set inside a line of type. */
+function Swatch({ surface }: { surface: "grid" | "tape" | "lcd" }) {
+  const look = {
+    grid: "grid-paper bg-pa-paper",
+    tape: "bg-tape bg-[linear-gradient(to_bottom,transparent_45%,var(--color-ribbon)_45%,var(--color-ribbon)_55%,transparent_55%)] bg-[length:60%_100%] bg-center bg-no-repeat",
+    lcd: "bg-sci-lcd shadow-[inset_0_0_0_3px_var(--color-sci-bezel)]",
+  }[surface];
+
+  return (
+    <span
+      aria-hidden="true"
+      className={`mx-[0.2em] inline-block h-[0.78em] w-[1.9em] rounded-full align-[-0.05em] ring-1 ring-pa-ink/15 ${look}`}
+      style={surface === "grid" ? { backgroundSize: "0.4em 0.4em" } : undefined}
+    />
+  );
+}
+
+/** The comparison the accordion opens out. */
+interface Slice {
+  id: string;
+  name: string;
+  path: string;
+  figure: string;
+  figureClass: string;
+  explanation: React.ReactNode;
+  picture: React.ReactNode;
+}
+
+function buildSlices(): Slice[] {
+  const exact = solvedFor(EXACT_EQUATION);
+
+  return [
+    {
+      id: "adding-machine",
+      name: "Adding machine",
+      path: "/tools/calculator",
+      figure: tapeTotal(SUM_KEYS),
+      figureClass: "text-ribbon",
+      explanation: (
+        <>
+          Works each step out as the key is pressed. 2 + 3 is already 5 by the time × is pressed, and
+          5 × 4 is {tapeTotal(SUM_KEYS)}. A printing adding machine has always worked this way, and the
+          tape prints the route it took.
+        </>
+      ),
+      picture: <TapePreview keys={SUM_KEYS} />,
+    },
+    {
+      id: "scientific",
+      name: "Scientific calculator",
+      path: "/tools/scientific",
+      figure: scientificAnswer(SUM_EXPRESSION),
+      figureClass: "text-sci-lcd",
+      explanation: (
+        <>
+          Reads the whole line first, then multiplies before it adds: 3 × 4 is 12, and 2 + 12 is{" "}
+          {scientificAnswer(SUM_EXPRESSION)}. This is the order of operations, and it is the rule a
+          math class uses.
+        </>
+      ),
+      picture: <LcdPreview expression={SUM_EXPRESSION} />,
+    },
+    {
+      id: "solver",
+      name: "Equation solver",
+      path: "/pre-algebra/solver",
+      figure: formatFraction(exact.value),
+      figureClass: "text-pa-chalk-mark",
+      explanation: (
+        <>
+          Keeps every number as an exact fraction. In {EXACT_EQUATION}, the answer is{" "}
+          {exact.answer}, written as a fraction rather than a decimal that has to stop somewhere.
+          A rounded decimal is marked wrong on a test where a fraction is expected.
+        </>
+      ),
+      picture: <BoardPreview equation={EXACT_EQUATION} />,
+    },
+  ];
+}
+
+/**
+ * Three instruments side by side, one opened out at a time.
+ *
+ * On a wide screen the slices sit in a row and the open one widens; on a narrow
+ * one they stack and the open one grows downward. Either way each slice is a
+ * button that says whether it is open, and hovering a slice on a wide screen
+ * opens it as well, so a mouse and a keyboard reach the same states.
+ */
+function CompareAccordion() {
+  const slices = buildSlices();
+  const [open, setOpen] = useState(slices[0].id);
+
+  return (
+    <div className="mt-14 flex flex-col gap-3 lg:h-[34rem] lg:flex-row">
+      {slices.map((slice) => {
+        const isOpen = slice.id === open;
+        return (
+          <article
+            key={slice.id}
+            onMouseEnter={() => setOpen(slice.id)}
+            className={[
+              "group relative flex min-w-0 flex-col overflow-hidden rounded-md border transition-[flex-grow,border-color,background-color] duration-500 ease-out",
+              isOpen
+                ? "border-desk-edge bg-desk-edge/40 lg:grow-[3.2]"
+                : "border-desk-edge/60 bg-desk-edge/15 lg:grow",
+              "lg:basis-0",
+            ].join(" ")}
+          >
+            <h3>
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`slice-${slice.id}`}
+                onClick={() => setOpen(slice.id)}
+                className="flex w-full cursor-pointer items-baseline justify-between gap-4 px-6 pb-3 pt-5 text-left"
+              >
+                <span className="font-sans text-[1.15rem] font-bold text-tape">{slice.name}</span>
+                <span
+                  className={`font-mono text-[2.2rem] leading-none tabular-nums ${slice.figureClass}`}
+                >
+                  {slice.figure}
+                </span>
+              </button>
+            </h3>
+
+            <div
+              id={`slice-${slice.id}`}
+              hidden={!isOpen}
+              className="flex flex-1 flex-col gap-6 px-6 pb-6 lg:min-w-[26rem] lg:flex-row lg:items-end"
+            >
+              <p className="font-sans text-[1rem] leading-[1.65rem] text-tape/75 lg:max-w-xs">
+                {slice.explanation}{" "}
+                <Link
+                  to={slice.path}
+                  className="text-tape underline decoration-tape/35 underline-offset-4 hover:decoration-tape"
+                >
+                  Open the {slice.name.toLowerCase()}
+                </Link>
+                .
+              </p>
+              <div className="flex flex-1 justify-center overflow-hidden lg:justify-end">
+                <div className="w-full max-w-64 transition-transform duration-700 ease-out group-hover:scale-105">
+                  {slice.picture}
+                </div>
+              </div>
+            </div>
+
+            {/* A closed slice on a wide screen still shows what it holds, set
+                along its length the way a spine is labelled on a shelf. */}
+            {!isOpen && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-6 left-6 hidden font-sans text-[0.8rem] font-bold uppercase tracking-[0.2em] text-tape/40 [writing-mode:vertical-rl] lg:block"
+              >
+                {slice.name}
+              </span>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+/* --- The page ------------------------------------------------------------ */
+
+export default function Home() {
+  const page = useRef<HTMLDivElement>(null);
+  useLandingMotion(page);
+
+  return (
+    <div ref={page} className="flex min-h-dvh w-full flex-col bg-desk-deep">
       <SiteHeader />
 
-      <main className="relative flex flex-1 w-full flex-col items-center bg-desk px-4 py-4 sm:py-6">
-        {/* The desk surface: a faint grain so the paper reads as paper lying on something. */}
+      <main className="w-full max-w-full flex-1 overflow-x-hidden">
+        {/* Attention. The promise on the left, the work itself on the right,
+            overlapping the line of type the way a sheet lies across a book. */}
+        <section className="relative overflow-hidden px-4 pb-24 pt-16 sm:px-6 md:pb-36 md:pt-24">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 55% 60% at 78% 70%, rgba(232,98,42,0.16), transparent 70%), radial-gradient(ellipse 60% 55% at 10% 10%, rgba(242,236,224,0.07), transparent 70%)",
+            }}
+          />
+          <div aria-hidden="true" className="desk-grain pointer-events-none absolute inset-0" />
+
+          <div className="relative mx-auto w-full max-w-6xl [container-type:inline-size]">
+            <h1 className="max-w-5xl font-sans text-[clamp(2.5rem,1.2rem+5cqi,5.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-tape">
+              Pre-algebra, explained step by step.
+            </h1>
+
+            <div className="mt-10 grid items-start gap-14 lg:mt-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+              <div className="lg:pt-12">
+                <p className="max-w-xl font-sans text-[1.15rem] leading-[1.85rem] text-tape/80 sm:text-[1.25rem]">
+                  A free course in {CHAPTERS.length} chapters that explains why each rule works
+                  before asking you to use it, with three calculators that show their working so
+                  you can check yours.
+                </p>
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                  <Link to={FIRST_CHAPTER_PATH} className={BUTTON_PRIMARY}>
+                    Start chapter 1
+                  </Link>
+                  <Link to="/tools" className={BUTTON_SECONDARY}>
+                    Browse the tools
+                  </Link>
+                </div>
+              </div>
+
+              <div className="relative flex justify-center lg:-mt-24 lg:justify-end">
+                <ExerciseSheet equation={HERO_EQUATION} />
+                <TapePreview
+                  keys={SUM_KEYS}
+                  className="absolute -bottom-12 left-0 hidden max-w-48 rotate-[5deg] sm:block lg:-left-6"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The twelve chapter titles, running along the desk edge. A picture of
+            the course's reach rather than its index, so it is hidden from
+            assistive technology; the real list is on the course page. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 70% 55% at 50% 38%, rgba(255,255,255,0.055), transparent 70%)",
-          }}
-        />
-        {/* The machine keeps the whole first viewport to itself: the notes below
-            are reading matter, and nothing in them is needed to get an answer. */}
-        <div className="relative flex w-full flex-1 items-center justify-center">
-          {/* The page's heading lives in the machine's own type, so it is said
-              once for a screen reader rather than twice on screen. */}
-          <h1 className="sr-only">
-            MathPencil calculator: add, subtract, multiply, and divide
-          </h1>
-          <AddingMachine />
+          className="marquee overflow-hidden border-y border-desk-edge/70 bg-desk-deep py-6"
+        >
+          <div className="marquee-track flex w-max">
+            {[0, 1].map((copy) => (
+              <ul key={copy} className="flex shrink-0 list-none items-center p-0">
+                {CHAPTERS.map((chapter) => (
+                  <li
+                    key={chapter.slug}
+                    className="flex items-center whitespace-nowrap px-6 font-sans text-[1.6rem] font-bold tracking-[-0.01em] text-tape/30 sm:text-[2.2rem]"
+                  >
+                    <span className="mr-6 font-mono text-[1rem] text-key-act/80">
+                      {String(chapter.number).padStart(2, "0")}
+                    </span>
+                    {chapter.title}
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
         </div>
 
-        <div className="relative flex w-full flex-col items-center pb-4 sm:pb-8">
-          <MachineNotes />
-        </div>
+        {/* Interest. What is here, as one grid: the course, and the three
+            instruments that sit beside it. */}
+        <section aria-labelledby="whats-here" className={`${SECTION} on-grid bg-pa-ground`}>
+          <div className="mx-auto w-full max-w-6xl [container-type:inline-size]">
+            <h2
+              id="whats-here"
+              className="max-w-5xl font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.12] tracking-[-0.02em] text-pa-ink"
+            >
+              One course <Swatch surface="grid" /> and three instruments{" "}
+              <Swatch surface="tape" /> that keep their working in view <Swatch surface="lcd" />
+            </h2>
+
+            <ul className="mt-14 grid list-none grid-flow-dense auto-rows-[minmax(15rem,auto)] gap-4 p-0 md:grid-cols-2 lg:grid-cols-4">
+              {/* The course: two columns by two rows. */}
+              <li className="md:col-span-2 md:row-span-2">
+                <Link
+                  to="/pre-algebra"
+                  className="group grid-paper relative flex h-full flex-col overflow-hidden border border-pa-paper-edge bg-pa-paper p-7 no-underline shadow-[0_2px_14px_-6px_rgba(27,42,65,0.35)] transition-[border-color,box-shadow] duration-300 hover:border-pa-biro hover:shadow-[0_18px_40px_-20px_rgba(27,42,65,0.6)] sm:p-9"
+                >
+                  <h3 className="font-sans text-[1.6rem] font-bold text-pa-ink">Pre-algebra course</h3>
+                  <p className="mt-3 max-w-md font-sans text-[1.02rem] leading-[1.7rem] text-pa-ink-soft">
+                    Written for a student meeting each topic for the first time. Every chapter
+                    states the rule, shows the mechanism behind it, then works examples through
+                    line by line.
+                  </p>
+
+                  <div className="mt-auto pt-10">
+                    <p className="font-mono text-[clamp(5rem,4rem+4cqi,8.5rem)] leading-none text-pa-biro transition-transform duration-700 ease-out group-hover:scale-105 origin-bottom-left">
+                      {CHAPTERS.length}
+                    </p>
+                    <p className="mt-2 font-sans text-[0.8rem] font-bold uppercase tracking-[0.2em] text-pa-ink-soft">
+                      chapters, free
+                    </p>
+                    <ol className="mt-6 grid list-none gap-2 p-0 font-sans text-[0.98rem] text-pa-ink sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-4">
+                      <li>
+                        <span className="font-mono text-pa-biro">01</span> {FIRST.title}
+                      </li>
+                      <li
+                        aria-hidden="true"
+                        className="hidden h-px bg-[repeating-linear-gradient(90deg,var(--color-pa-ink-soft)_0_4px,transparent_4px_10px)] opacity-50 sm:block"
+                      />
+                      <li>
+                        <span className="font-mono text-pa-biro">
+                          {String(LAST.number).padStart(2, "0")}
+                        </span>{" "}
+                        {LAST.title}
+                      </li>
+                    </ol>
+                  </div>
+                </Link>
+              </li>
+
+              {/* The adding machine: two columns by one row. */}
+              <li className="md:col-span-2">
+                <BentoTool
+                  path="/tools/calculator"
+                  className="bg-desk"
+                  picture={<TapePreview keys="125 + 48 - 19 =" className="max-w-48" />}
+                  wide
+                />
+              </li>
+
+              {/* The scientific calculator and the solver: one cell each. With
+                  the course's four cells and the adding machine's two, that is
+                  eight cells: two full rows of four, or four full rows of two. */}
+              <li>
+                <BentoTool
+                  path="/tools/scientific"
+                  className="bg-sci-case"
+                  dark
+                  picture={<LcdPreview expression="√(3²+4²)" className="max-w-52" />}
+                />
+              </li>
+              <li>
+                <BentoTool
+                  path="/pre-algebra/solver"
+                  className="bg-pa-board"
+                  dark
+                  picture={<BoardPreview equation="4x = 18" maxSteps={1} className="max-w-52" />}
+                />
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Desire. How a chapter teaches, with the heading held in place while
+            the four parts of a chapter pass beside it. */}
+        <section
+          aria-labelledby="how-a-chapter-teaches"
+          className={`${SECTION} bg-desk-deep`}
+        >
+          <div className="mx-auto grid w-full max-w-6xl [container-type:inline-size] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+            <div data-pin className="self-start">
+              <h2
+                id="how-a-chapter-teaches"
+                className="font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.08] tracking-[-0.02em] text-tape"
+              >
+                How a chapter teaches
+              </h2>
+              <p className="mt-5 max-w-md font-sans text-[1.08rem] leading-[1.8rem] text-tape/70">
+                Each chapter follows the same order, so the shape of the page is familiar by the
+                second one and the attention can go to the math.
+              </p>
+              <Link to={FIRST_CHAPTER_PATH} className={`${BUTTON_SECONDARY} mt-8`}>
+                Read chapter 1
+              </Link>
+            </div>
+
+            <ol className="flex list-none flex-col gap-20 p-0 md:gap-28">
+              <TeachingStep
+                title="The reason comes with the rule"
+                body="A rule on its own is something to memorise. A rule with its reason is something you can rebuild when you forget it, so each topic opens by saying what happens and why."
+              >
+                <figure className="on-grid w-full bg-pa-note px-6 py-6 text-pa-ink shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)]">
+                  <figcaption className="font-sans text-[0.78rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
+                    From chapter {ORDER_CHAPTER.number},{" "}
+                    <Link to={`/pre-algebra/${ORDER_CHAPTER.slug}`} className="text-pa-biro underline underline-offset-4">
+                      {ORDER_CHAPTER.title.toLowerCase()}
+                    </Link>
+                  </figcaption>
+                  <blockquote className="mt-3 font-sans text-[1.15rem] leading-[1.8rem]">
+                    {ORDER_CHAPTER.topic?.summary}
+                  </blockquote>
+                </figure>
+              </TeachingStep>
+
+              {INTEGERS_EXAMPLE && (
+                <TeachingStep
+                  title="Examples are worked one line at a time"
+                  body="Every example is written the way it would be on paper: the question, each move with what it does, then the answer. Nothing is skipped because it seemed obvious."
+                >
+                  <figure className="on-grid grid-paper w-full border border-pa-paper-edge bg-pa-paper px-6 py-6 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)]">
+                    <figcaption className="font-sans text-[0.78rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
+                      From chapter {INTEGERS_CHAPTER.number},{" "}
+                      <Link to={`/pre-algebra/${INTEGERS_CHAPTER.slug}`} className="text-pa-biro underline underline-offset-4">
+                        {INTEGERS_CHAPTER.title.toLowerCase()}
+                      </Link>
+                    </figcaption>
+                    <p className="mt-3 font-sans text-[1.1rem] font-bold text-pa-ink">
+                      {INTEGERS_EXAMPLE.question}
+                    </p>
+                    <ol className="mt-3 list-none space-y-1.5 p-0 font-sans text-[1.02rem] leading-[1.6rem] text-pa-biro">
+                      {INTEGERS_EXAMPLE.steps.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ol>
+                    <p className="mt-4 inline-block rounded-full border-2 border-pa-mark px-3 py-0.5 font-mono text-[1.2rem] text-pa-mark">
+                      {INTEGERS_EXAMPLE.answer}
+                    </p>
+                  </figure>
+                </TeachingStep>
+              )}
+
+              <TeachingStep
+                title="The solver checks your working, not only your answer"
+                body="Type an equation into the solver and it writes out each move it makes to both sides. Lay that beside your own working and the first line that differs is where to look."
+              >
+                <BoardPreview equation={BOARD_EQUATION} />
+              </TeachingStep>
+
+              <TeachingStep
+                title="Each chapter leads into the next"
+                body="The chapters run in the order a class takes them. Each one ends by pointing to the next, and each assumes only what came before it."
+              >
+                <ol className="flex w-full list-none flex-col gap-2 p-0">
+                  {CHAPTERS.slice(6, 9).map((chapter, index) => (
+                    <li key={chapter.slug}>
+                      <Link
+                        to={`/pre-algebra/${chapter.slug}`}
+                        className={[
+                          "flex items-baseline gap-5 border px-5 py-4 font-sans no-underline transition-colors duration-150",
+                          index === 1
+                            ? "border-tape bg-tape text-ink"
+                            : "border-desk-edge text-tape/60 hover:border-tape/60 hover:text-tape",
+                        ].join(" ")}
+                      >
+                        <span className="font-mono text-[0.95rem] text-key-act">
+                          {String(chapter.number).padStart(2, "0")}
+                        </span>
+                        <span className="text-[1.1rem] font-bold">{chapter.title}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </TeachingStep>
+            </ol>
+          </div>
+        </section>
+
+        {/* The three instruments, put to the same sum. */}
+        <section
+          aria-labelledby="same-keys"
+          className={`${SECTION} border-t border-desk-edge/70 bg-desk-deep`}
+        >
+          <div className="mx-auto w-full max-w-6xl [container-type:inline-size]">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+              <h2
+                id="same-keys"
+                className="font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.08] tracking-[-0.02em] text-tape"
+              >
+                Same keys, different answers, and why
+              </h2>
+              <p className="font-sans text-[1.05rem] leading-[1.75rem] text-tape/70">
+                Key 2 + 3 × 4 into two calculators and you can get two answers. Both are correct
+                for the rule each one follows, and knowing the rule is what makes an answer
+                trustworthy.
+              </p>
+            </div>
+            <CompareAccordion />
+          </div>
+        </section>
+
+        {/* Action. */}
+        <section aria-labelledby="start" className={`${SECTION} on-paper bg-tape text-ink`}>
+          <div className="mx-auto w-full max-w-6xl [container-type:inline-size]">
+            <h2
+              id="start"
+              className="max-w-5xl font-sans text-[clamp(2.4rem,1.4rem+4cqi,5rem)] font-bold leading-[1.02] tracking-[-0.03em]"
+            >
+              Start with chapter 1, {FIRST.title.toLowerCase()}.
+            </h2>
+            <p className="mt-6 max-w-2xl font-sans text-[1.15rem] leading-[1.85rem] text-ink-soft">
+              {FIRST.blurb} No account, no sign-up, and nothing to pay.
+            </p>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link to={FIRST_CHAPTER_PATH} className={BUTTON_PRIMARY}>
+                Start chapter 1
+              </Link>
+              <Link
+                to="/pre-algebra"
+                className="px-2 py-3 font-sans text-[1rem] font-bold text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"
+              >
+                See all {CHAPTERS.length} chapters
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       <ScrollToTop />
       <SiteFooter />
     </div>
+  );
+}
+
+/** One part of how a chapter teaches: what it is on the left, a sample on the right. */
+function TeachingStep({
+  title,
+  body,
+  children,
+}: {
+  title: string;
+  body: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <li className="grid gap-6">
+      <div data-scale-fade className="origin-center">
+        {children}
+      </div>
+      <div>
+        <h3 className="font-sans text-[1.4rem] font-bold text-tape">{title}</h3>
+        <p className="mt-2 max-w-xl font-sans text-[1.02rem] leading-[1.7rem] text-tape/70">{body}</p>
+      </div>
+    </li>
+  );
+}
+
+/** A tool's cell in the grid: its picture above, its name and summary below. */
+function BentoTool({
+  path,
+  picture,
+  className,
+  dark = false,
+  wide = false,
+}: {
+  path: string;
+  picture: React.ReactNode;
+  className: string;
+  dark?: boolean;
+  wide?: boolean;
+}) {
+  const tool = TOOLS.find((candidate) => candidate.path === path);
+  if (!tool) throw new Error(`No tool at ${path}`);
+
+  return (
+    <Link
+      to={tool.path}
+      className={`group flex h-full flex-col overflow-hidden border border-pa-paper-edge no-underline transition-shadow duration-300 hover:shadow-[0_18px_40px_-20px_rgba(27,42,65,0.7)] ${className} ${
+        wide ? "sm:flex-row" : ""
+      }`}
+    >
+      <div
+        className={`flex items-center justify-center overflow-hidden px-6 pt-7 ${
+          wide ? "sm:w-1/2 sm:py-7" : ""
+        }`}
+      >
+        <div className="flex w-full justify-center transition-transform duration-700 ease-out group-hover:scale-105">
+          {picture}
+        </div>
+      </div>
+      <div className={`flex flex-1 flex-col p-6 ${wide ? "sm:justify-center" : ""}`}>
+        <h3 className={`font-sans text-[1.2rem] font-bold ${dark ? "text-tape" : "text-ink"}`}>
+          {tool.name}
+        </h3>
+        <p
+          className={`mt-1.5 font-sans text-[0.95rem] leading-[1.5rem] ${
+            dark ? "text-tape/70" : "text-ink-soft"
+          }`}
+        >
+          {wide ? tool.summary : tool.rule}
+        </p>
+      </div>
+    </Link>
   );
 }

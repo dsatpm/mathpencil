@@ -3,15 +3,28 @@
 ## How it works
 
 `mathpencil.com` is a **pre-rendered static site**. No route uses a `loader` or
-`action`, so `react-router.config.ts` sets `ssr: false` with `prerender: true`.
-`npm run build` writes real HTML to `build/client`:
+`action`, so `react-router.config.ts` sets `ssr: false`. `prerender` is a function
+there, not `true`, because `/pre-algebra/:slug` carries a param and a param cannot
+be discovered: it maps the `CHAPTERS` array to paths. `npm run build` writes real
+HTML to `build/client`:
 
 ```
-build/client/index.html           # /
-build/client/contact/index.html   # /contact
-build/client/__spa-fallback.html  # client-side fallback
-build/client/assets/...           # hashed JS + CSS
+build/client/index.html                       # / (the landing page)
+build/client/tools/index.html                 # /tools; the calculators are under it
+build/client/scientific/index.html            # forwarding page to /tools/scientific (noindex)
+build/client/contact/index.html               # /contact
+build/client/pre-algebra/index.html           # the course hub
+build/client/pre-algebra/solver/index.html    # the solver
+build/client/pre-algebra/number-theory/...    # one directory per chapter
+build/client/sitemap.xml                      # written by postbuild, not by hand
+build/client/__spa-fallback.html              # client-side fallback
+build/client/assets/...                       # hashed JS + CSS
 ```
+
+`npm run build` also runs `scripts/sitemap.mjs` through npm's `postbuild` hook. It
+walks `build/client` for `index.html` files and writes `sitemap.xml` from what it
+finds, so the sitemap is whatever shipped. There is no `public/sitemap.xml` to keep
+in step, and nothing extra to run on the server.
 
 nginx serves that directory directly. There is no Node process in production,
 nothing to keep alive, and no `proxy_pass`.
@@ -62,8 +75,10 @@ pieces use that:
 - **`verify-deploy` job in `ci.yml`.** Runs only on pushes to `main`, after
   `build` passes. It polls `/version.json` for up to 10 minutes until the live
   commit is the pushed commit or a descendant of it, then requests `/`,
-  `/contact/`, `/scientific/`, `/pre-algebra/` and `/ads.txt` and expects 200
-  and a `<title>`. A red run means the deploy did not land or the site is
+  `/tools/`, `/tools/calculator/`, `/tools/scientific/`, `/pre-algebra/`,
+  `/pre-algebra/solver/`, `/pre-algebra/introduction/`, `/contact/` and
+  `/ads.txt` and expects 200 and a `<title>`. The list is `ROUTES` in
+  `.scripts/verify-deploy.sh`; add a path there when a page is added. A red run means the deploy did not land or the site is
   unhealthy. A newer push cancels the older run; the newer run covers both.
 - **`site-health.yml`.** Every 30 minutes it smoke-tests the pages and, when the
   tip of `main` is older than 15 minutes, also requires the live site to be at
@@ -171,6 +186,24 @@ location ~* \.html$ {
 }
 ```
 
+### Moved addresses
+
+The scientific calculator moved from `/scientific` to `/tools/scientific` in
+1.4.0. The build still writes a `noindex` forwarding page at `/scientific`, so an
+old link works with no server change. A 301 is still the better answer: search
+engines move the old address's ranking to the new one, and the visitor skips a
+page load. Add this inside the `server` block, above `location /`:
+
+```nginx
+# Moved in 1.4.0. Keep the query string; the browser keeps the #anchor itself.
+location ~ ^/scientific/?$ {
+    return 301 /tools/scientific$is_args$args;
+}
+```
+
+The old `/` calculator needs no rule: `/` is now the landing page, which links
+to `/tools/calculator`.
+
 `try_files $uri /index.html` is **not** sufficient — it never resolves
 `/contact/index.html`, and when `index.html` is absent it produces an internal
 redirect cycle that nginx reports as a 500.
@@ -187,9 +220,13 @@ nginx -t && systemctl reload nginx
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com
 curl -sS -o /dev/null -w '%{http_code}\n' https://mathpencil.com/contact
 curl -sS https://mathpencil.com | grep -o '<title>[^<]*</title>'
+curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' https://mathpencil.com/scientific
 ```
 
-Both should be `200`. The webroot should contain `index.html`, `contact/` and
+The last should print `301 https://mathpencil.com/tools/scientific` once the
+moved-address rule is in. Before it is, it prints `200` (the forwarding page).
+
+The first two should be `200`. The webroot should contain `index.html`, `contact/` and
 `assets/` — if you see `client/` and `server/` in there, something copied
 `build/` instead of `build/client/`.
 

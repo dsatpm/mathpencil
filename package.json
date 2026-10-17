@@ -1,18 +1,22 @@
 {
   "name": "calculation",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "homepage": "https://mathpencil.com",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "react-router build",
+    "postbuild": "node scripts/sitemap.mjs",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "check:build": "node scripts/check-build.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-router/node": "^8.4.0",
     "@react-router/serve": "^8.4.0",
+    "gsap": "^3.15.0",
     "isbot": "^5.1.36",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

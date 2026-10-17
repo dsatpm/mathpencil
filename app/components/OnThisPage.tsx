@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import type { PageSection } from "../data/pre-algebra";
+import { useSectionSpy } from "../hooks/useSectionSpy";
 
 export interface OnThisPageProps {
   sections: PageSection[];
@@ -20,41 +20,7 @@ export interface OnThisPageProps {
  * keeping score.
  */
 export function OnThisPage({ sections }: OnThisPageProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const headings = sections
-      .map((section) => document.getElementById(section.id))
-      .filter((element): element is HTMLElement => element !== null);
-
-    if (headings.length === 0) return;
-
-    // Which sections are currently crossing the reading band, kept across
-    // callbacks. An observer only reports what *changed*, so deciding from one
-    // callback's entries alone leaves the mark on a section that has already
-    // scrolled away.
-    const crossing = new Set<string>();
-
-    // The band is the top third of the viewport: a section counts as "where you
-    // are" once it has reached reading height, not when it first appears at the
-    // bottom of the screen.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) crossing.add(entry.target.id);
-          else crossing.delete(entry.target.id);
-        });
-
-        // Document order, so the topmost section in the band wins.
-        const index = sections.findIndex((section) => crossing.has(section.id));
-        if (index !== -1) setCurrentIndex(index);
-      },
-      { rootMargin: "-88px 0px -66% 0px", threshold: 0 },
-    );
-
-    headings.forEach((heading) => observer.observe(heading));
-    return () => observer.disconnect();
-  }, [sections]);
+  const currentIndex = useSectionSpy(sections);
 
   return (
     <aside aria-labelledby="on-this-page" className="on-board lg:sticky lg:top-6 lg:self-start">
@@ -77,7 +43,7 @@ export function OnThisPage({ sections }: OnThisPageProps) {
                   href={`#${section.id}`}
                   aria-current={isCurrent ? "location" : undefined}
                   className={[
-                    "flex gap-2.5 py-1.5 font-sans text-[0.88rem] leading-[1.25rem] no-underline",
+                    "flex gap-2.5 py-1.5 font-sans text-[0.88rem] leading-5 no-underline",
                     isCurrent
                       ? "font-semibold text-pa-chalk-mark"
                       : isStruck

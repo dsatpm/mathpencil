@@ -33,8 +33,11 @@ CHILD="$(git -C "$REPO" rev-parse HEAD)"
 
 # --- fixture site -----------------------------------------------------------
 SITE="$WORK/site"
-mkdir -p "$SITE/contact" "$SITE/scientific" "$SITE/pre-algebra"
-for p in index.html contact/index.html scientific/index.html pre-algebra/index.html; do
+PAGES="index.html tools/index.html tools/calculator/index.html tools/scientific/index.html
+pre-algebra/index.html pre-algebra/solver/index.html pre-algebra/introduction/index.html
+contact/index.html"
+for p in $PAGES; do
+  mkdir -p "$SITE/$(dirname "$p")"
   echo '<html><head><title>fixture</title></head></html>' > "$SITE/$p"
 done
 echo 'google.com, pub-0, DIRECT' > "$SITE/ads.txt"

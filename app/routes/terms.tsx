@@ -54,8 +54,8 @@ export default function Terms() {
             <a href="/" className={LINK}>
               mathpencil.com
             </a>{" "}
-            by HTPdevs. Using the site means accepting what follows. It is short, because a
-            calculator does not need a long contract.
+            by HTPdevs. Using the site means accepting what follows. It is short, because a free
+            study site does not need a long contract.
           </p>
 
           <h2 className={HEADING}>What you get</h2>
@@ -71,8 +71,8 @@ export default function Terms() {
             MathPencil is offered as it is, with no warranty of any kind, including no warranty that
             a given answer is correct, or that the site is fit for any particular purpose. It is
             built carefully and the two engines behind it are described openly on the{" "}
-            <a href="/#how-it-works" className={LINK}>
-              home page
+            <a href="/tools/calculator#how-it-works" className={LINK}>
+              adding machine page
             </a>
             , but software has faults, and a figure on a screen is not professional advice. Do not
             rely on MathPencil alone for anything financial, medical, structural, legal or otherwise
@@ -141,7 +141,7 @@ export default function Terms() {
             href="/"
             className="mt-8 inline-block rounded-sm bg-key-act px-5 py-3 font-sans text-[1.2rem] font-bold uppercase tracking-[0.16em] text-white no-underline shadow-[0_3px_0_0_var(--color-key-act-deep)] transition-[transform,box-shadow] duration-90 ease-linear active:translate-y-0.75 active:shadow-[0_0_0_0_var(--color-key-act-deep)]"
           >
-            Back to the calculator
+            Back to the home page
           </a>
         </PaperSheet>
       </main>

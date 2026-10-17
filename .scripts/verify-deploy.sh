@@ -16,7 +16,7 @@ set -euo pipefail
 SITE_URL="${SITE_URL:-https://mathpencil.com}"
 SITE_URL="${SITE_URL%/}"
 POLL_INTERVAL="${POLL_INTERVAL:-20}"
-ROUTES="${ROUTES:-/ /contact/ /scientific/ /pre-algebra/ /ads.txt}"
+ROUTES="${ROUTES:-/ /tools/ /tools/calculator/ /tools/scientific/ /pre-algebra/ /pre-algebra/solver/ /pre-algebra/introduction/ /contact/ /ads.txt}"
 EXPECT_SHA=""
 WAIT=0
 

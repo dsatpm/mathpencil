@@ -5,8 +5,9 @@ import { NavLink } from "react-router";
  * rather than a layout change.
  */
 const NAV_LINKS: Array<{ to: string; label: string }> = [
-  { to: "/scientific", label: "Scientific" },
   { to: "/pre-algebra", label: "Pre-algebra" },
+  // Lit on every page under it, so the calculators read as part of one section.
+  { to: "/tools", label: "Tools" },
   { to: "/contact", label: "Contact" },
 ];
 
