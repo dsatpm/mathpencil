@@ -213,8 +213,8 @@ export function MachineNotes() {
           MathPencil is free, and advertising is what pays for it. Ads are served by Google AdSense,
           which may set cookies or read device identifiers to choose and measure them. Your
           calculations are never part of that: they stay in your browser and are not shared with any
-          advertiser. What is collected, by whom, and how to turn personalised advertising off is set
-          out in the{" "}
+          advertiser. The ads are not personalised: Google is told to treat MathPencil as a site
+          children use. What is collected, and by whom, is set out in the{" "}
           <a
             href="/privacy"
             className="text-ink underline decoration-ink/30 underline-offset-4 hover:decoration-ink"

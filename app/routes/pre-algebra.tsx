@@ -199,8 +199,9 @@ export default function PreAlgebra() {
               served by Google AdSense, which may set cookies or read device
               identifiers to choose and measure them. Nothing you type into the
               solver is part of that. It stays in your browser and is not shared
-              with any advertiser. What is collected, by whom, and how to turn
-              personalised advertising off is set out in the{" "}
+              with any advertiser. The ads are not personalised: Google is told
+              to treat MathPencil as a site children use. What is collected, and
+              by whom, is set out in the{" "}
               <Link to="/privacy" className={LINK}>
                 privacy policy
               </Link>

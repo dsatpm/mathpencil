@@ -10,7 +10,7 @@ const DESCRIPTION =
   "What MathPencil does and does not collect: calculations stay in your browser, the site sets no cookies of its own, and Google AdSense serves the advertising.";
 
 /** Last substantive change to this policy. Update it whenever the text below changes. */
-const EFFECTIVE = "20 September 2026";
+const EFFECTIVE = "17 October 2026";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -51,7 +51,7 @@ export default function Privacy() {
           </h1>
 
           <p className={BODY}>
-            MathPencil is a free pre-algebra course and a set of calculators, published at{" "}
+            MathPencil is free math lessons and calculators for learners of every age, published at{" "}
             <a href="/" className={LINK}>
               mathpencil.com
             </a>{" "}
@@ -66,8 +66,13 @@ export default function Privacy() {
             <li>MathPencil sets no cookies of its own and saves nothing to your device.</li>
             <li>We run no analytics or tracking scripts of our own.</li>
             <li>
-              Advertising is served by Google, which does use cookies and similar identifiers. That
-              is the only third party on the page.
+              Children use MathPencil, so ads are not personalised. Google is told to treat the site
+              as child-directed, which turns off interest-based ads and remarketing.
+            </li>
+            <li>
+              Advertising is served by Google, which still uses cookies and similar identifiers to
+              show contextual ads, count them and prevent fraud. That is the only third party on the
+              page.
             </li>
           </ul>
 
@@ -91,10 +96,13 @@ export default function Privacy() {
           <h2 className={HEADING}>Advertising</h2>
           <p className={BODY}>
             MathPencil is free to use and carries advertising to pay for its hosting and development.
-            Ads are served by Google AdSense. Google and its advertising partners may set or read
-            cookies and similar identifiers in order to serve ads, to limit how often you see the
-            same one, and to measure whether an ad worked. Depending on your settings and location,
-            this may include showing you ads based on your prior visits to this or other websites.
+            Ads are served by Google AdSense. MathPencil is used by children as well as adults, so
+            the site is set up for Google to treat it as child-directed. Under that setting Google
+            does not show interest-based ads or remarketing ads here, and the ads are chosen from
+            the content of the page you are reading rather than from your browsing history. Google
+            and its partners may still set or read cookies and similar identifiers to serve those
+            ads, to limit how often you see the same one, to measure whether an ad worked, and to
+            detect fraud.
           </p>
           <p className={BODY}>
             Google's own description of how it uses information from sites that use its services is
@@ -106,26 +114,17 @@ export default function Privacy() {
             >
               policies.google.com/technologies/partner-sites
             </a>
-            . You can review and switch off personalised advertising from Google at{" "}
+            . Google's controls for personalised advertising on other sites are at{" "}
             <a href="https://myadcenter.google.com" className={LINK} rel="noopener">
               myadcenter.google.com
             </a>
-            , and opt out of personalisation by many other vendors at{" "}
+            , and you can opt out of personalisation by many other vendors at{" "}
             <a href="https://optout.aboutads.info" className={LINK} rel="noopener">
               optout.aboutads.info
             </a>{" "}
             or, in Europe,{" "}
             <a href="https://www.youronlinechoices.eu" className={LINK} rel="noopener">
               youronlinechoices.eu
-            </a>
-            . Switching personalisation off does not remove advertising; it makes it less relevant.
-          </p>
-          <p className={BODY}>
-            Third-party vendors, including Google, use cookies to serve ads based on a user's prior
-            visits to this website or other websites, and users may opt out of personalised
-            advertising by visiting{" "}
-            <a href="https://www.google.com/settings/ads" className={LINK} rel="noopener">
-              Google's Ads Settings
             </a>
             .
           </p>
@@ -143,10 +142,9 @@ export default function Privacy() {
           <h2 className={HEADING}>If you are in California or another US state</h2>
           <p className={BODY}>
             We do not sell personal information, and we do not share it for cross-context behavioural
-            advertising except insofar as Google's advertising, described above, operates on this
-            page. Google's Ads Settings link above is the way to limit personalisation. We hold no
-            account, profile or contact record about you that could be requested or deleted, because
-            we never collect one.
+            advertising: interest-based ads and remarketing are switched off on this site, as
+            described above. We hold no account, profile or contact record about you that could be
+            requested or deleted, because we never collect one.
           </p>
 
           <h2 className={HEADING}>Server logs</h2>
@@ -160,8 +158,12 @@ export default function Privacy() {
 
           <h2 className={HEADING}>Children</h2>
           <p className={BODY}>
-            MathPencil is a general-audience tool and is not directed at children under 13. We do not
-            knowingly collect personal information from anyone, of any age.
+            MathPencil is for learners of every age, and children use it. There is no account, no
+            sign-up and no form that asks for a name or an email address, so the site does not
+            collect personal information from anyone, of any age. Because children use the site,
+            advertising is set to the child-directed treatment described above: no interest-based
+            ads and no remarketing. If you are a parent or guardian and have a question about this,
+            write to the address below.
           </p>
 
           <h2 className={HEADING}>Changes to this policy</h2>

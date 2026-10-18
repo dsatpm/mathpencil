@@ -218,8 +218,16 @@ The AdSense loader sits in the document head in `app/root.tsx`, keyed by
 `ADSENSE_CLIENT`. No `<ins class="adsbygoogle">` slots are placed; auto ads
 inject themselves if they are switched on in the AdSense dashboard.
 
-Two things are configured in the AdSense dashboard rather than in this repo, and
-the privacy policy assumes both are on:
+Three things are configured in Google's consoles rather than in this repo, and
+the privacy policy assumes all three are on:
+
+- **Child-directed treatment for the whole site.** Search Console, per Google's
+  [age-restricted treatment help page](https://support.google.com/adsense/answer/3248194).
+  The site is used by children, and `/privacy` and the ad notes on the calculator
+  and course pages say ads are not personalised. Until this is switched on those
+  pages state something the ad setup does not do. Google's code tags apply to
+  `<ins class="adsbygoogle">` units, which this site does not place, so the
+  site-level setting is the switch.
 
 - **A consent message for the EEA, the UK and Switzerland.** AdSense →
   Privacy & messaging → GDPR. Google requires a certified CMP for traffic from
