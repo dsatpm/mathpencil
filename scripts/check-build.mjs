@@ -114,8 +114,28 @@ for (const path of built) {
   check(listed.has(path) === indexable, `${path} is ${indexable ? "missing from" : "listed in"} the sitemap`);
 }
 
+// The site is used by children, so ads are set to child-directed treatment in
+// Google's Search Console and the privacy policy must say so. Text that claims
+// the opposite, or describes interest-based ads as running here, is a
+// regression: it would tell visitors something the ad setup does not do.
+if (built.has("/privacy")) {
+  const privacy = visibleText(await html("/privacy"));
+  check(!/not directed at children/i.test(privacy), "/privacy says the site is not directed at children");
+  check(!/ads based on (a user's|your) prior visits/i.test(privacy), "/privacy says ads follow prior visits");
+  check(/child-directed/i.test(privacy), "/privacy does not describe the child-directed ad treatment");
+}
+
+// The ad notes under the calculators and the course must not offer a way to turn
+// personalised ads off: they are off for everyone.
+for (const path of ["/tools/calculator", "/tools/scientific", "/pre-algebra"]) {
+  if (!built.has(path)) continue;
+  const note = visibleText(await html(path));
+  check(!/turn personalised advertising off/i.test(note), `${path} still offers to turn personalised ads off`);
+  check(/ads are not personalised/i.test(note), `${path} ad note does not say the ads are not personalised`);
+}
+
 // The house rule: no em dash anywhere a visitor reads, on the pages this work added.
-for (const path of ["/", "/tools", "/scientific"]) {
+for (const path of ["/", "/tools", "/scientific", "/privacy"]) {
   if (built.has(path)) check(!visibleText(await html(path)).includes("\u2014"), `${path} shows an em dash`);
 }
 
