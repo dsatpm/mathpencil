@@ -17,9 +17,12 @@ import { useLandingMotion } from "../hooks/useLandingMotion";
 import { formatFraction } from "../lib/linear-solver";
 import { absoluteUrl, PUBLISHER, SITE_NAME, socialMeta, TOOLS } from "../lib/site";
 
-const TITLE = "MathPencil: free pre-algebra lessons and calculators that show their working";
+// The title and description name only what exists today. The levels still
+// planned appear on the page, next to the word "planned", and nowhere a search
+// result would quote them.
+const TITLE = "MathPencil: free math, explained step by step";
 const DESCRIPTION =
-  "A free twelve-chapter pre-algebra course that explains why each rule works, plus an adding machine, a scientific calculator and an equation solver that show every step.";
+  "A free pre-algebra course that explains why each rule works, plus an adding machine, scientific calculator and equation solver that show their working.";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -75,6 +78,64 @@ function quotedChapter(slug: string) {
 const ORDER_CHAPTER = quotedChapter("order-of-operations");
 const INTEGERS_CHAPTER = quotedChapter("integers-and-negative-numbers");
 const INTEGERS_EXAMPLE = INTEGERS_CHAPTER.examples?.[0];
+
+/**
+ * What a visitor might arrive asking, and the page on this site that answers it.
+ *
+ * A chapter question takes its label and its one-line answer from the course
+ * data, so the line under a question is the chapter's own blurb and cannot drift
+ * from the chapter. A tool question reads from `TOOLS`. A renamed slug or path
+ * throws at build time instead of shipping a dead link.
+ */
+interface Question {
+  question: string;
+  to: string;
+  /** Where the answer lives, in a few words. */
+  source: string;
+  /** What that page covers, in a sentence. */
+  summary: string;
+}
+
+function chapterQuestion(question: string, slug: string): Question {
+  const chapter = quotedChapter(slug);
+  return {
+    question,
+    to: `/pre-algebra/${chapter.slug}`,
+    source: `Chapter ${chapter.number}, ${chapter.title}`,
+    summary: chapter.blurb,
+  };
+}
+
+function toolQuestion(question: string, path: string): Question {
+  const tool = TOOLS.find((candidate) => candidate.path === path);
+  if (!tool) throw new Error(`The home page quotes a tool that does not exist: ${path}`);
+  return { question, to: tool.path, source: tool.name, summary: tool.summary };
+}
+
+const QUESTIONS: Question[] = [
+  chapterQuestion("I have been away from math for years. Where do I start?", "introduction"),
+  chapterQuestion("What is a negative times a negative?", "integers-and-negative-numbers"),
+  chapterQuestion("Why is 2 + 3 × 4 equal to 14 and not 20?", "order-of-operations"),
+  chapterQuestion("How do I solve for x?", "inequalities-and-one-step-equations"),
+  toolQuestion("How do I check my working on an equation?", "/pre-algebra/solver"),
+  chapterQuestion("What is the difference between an expression and an equation?", "expressions-variables-and-equations"),
+  chapterQuestion("How do I work out a percent?", "fractions-decimals-and-percents"),
+  chapterQuestion("How do I find an area, a perimeter or a missing side?", "geometry-and-measurement"),
+  toolQuestion("How do I add up a long list of numbers and check it?", "/tools/calculator"),
+  chapterQuestion("What does an average or a median tell me?", "probability-and-statistics"),
+];
+
+/**
+ * The route through math, lowest level first. Only a level with `to` exists.
+ * A level without one has no page, no link and no description: saying what a
+ * planned course will contain would be promising it.
+ */
+const LEVELS: Array<{ name: string; to?: string }> = [
+  { name: "Grade-school math" },
+  { name: "Pre-algebra", to: "/pre-algebra" },
+  { name: "High school math" },
+  { name: "College math" },
+];
 
 const HERO_EQUATION = "3x + 5 = 20";
 const BOARD_EQUATION = "5x - 7 = 2x + 8";
@@ -312,24 +373,37 @@ export default function Home() {
 
           <div className="relative mx-auto w-full max-w-6xl [container-type:inline-size]">
             <h1 className="max-w-5xl font-sans text-[clamp(2.5rem,1.2rem+5cqi,5.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-tape">
-              Pre-algebra, explained step by step.
+              Math, explained
+              {/* Breaks the line where the exercise sheet begins, so the sheet
+                  overlaps empty desk and not the end of the heading. */}
+              <br className="hidden md:block" /> one step at a time.
             </h1>
 
             <div className="mt-10 grid items-start gap-14 lg:mt-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <div className="lg:pt-12">
                 <p className="max-w-xl font-sans text-[1.15rem] leading-[1.85rem] text-tape/80 sm:text-[1.25rem]">
-                  A free course in {CHAPTERS.length} chapters that explains why each rule works
-                  before asking you to use it, with three calculators that show their working so
-                  you can check yours.
+                  Free lessons that explain why each rule works before asking you to use it, and
+                  tools that write out every step so you can check your own. No account, no
+                  sign-up.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <Link to={FIRST_CHAPTER_PATH} className={BUTTON_PRIMARY}>
-                    Start chapter 1
+                    Start the course
                   </Link>
                   <Link to="/tools" className={BUTTON_SECONDARY}>
-                    Browse the tools
+                    Try a tool
                   </Link>
                 </div>
+                <p className="mt-6 font-sans text-[1rem] text-tape/70">
+                  Looking for one answer?{" "}
+                  <a
+                    href="#questions"
+                    className="text-tape underline decoration-tape/35 underline-offset-4 hover:decoration-tape"
+                  >
+                    Start with your question
+                  </a>
+                  .
+                </p>
               </div>
 
               <div className="relative flex justify-center lg:-mt-24 lg:justify-end">
@@ -369,6 +443,51 @@ export default function Home() {
           </div>
         </div>
 
+        {/* The questions people arrive with, each linked to the page that answers
+            it. Works as an index for a visitor who does not know the course's
+            vocabulary, and as plain links a search engine can follow. */}
+        <section
+          id="questions"
+          aria-labelledby="questions-heading"
+          className={`${SECTION} scroll-mt-4 bg-desk-deep`}
+        >
+          <div className="mx-auto w-full max-w-6xl [container-type:inline-size]">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end">
+              <h2
+                id="questions-heading"
+                className="font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.08] tracking-[-0.02em] text-tape"
+              >
+                Start with your question
+              </h2>
+              <p className="font-sans text-[1.05rem] leading-[1.75rem] text-tape/70">
+                Each question leads to the page on this site that answers it. Nothing here is a
+                quiz and nothing is saved.
+              </p>
+            </div>
+
+            <ul className="mt-14 grid list-none gap-4 p-0 md:grid-cols-2">
+              {QUESTIONS.map((item) => (
+                <li key={item.question}>
+                  <Link
+                    to={item.to}
+                    className="group flex h-full flex-col border border-desk-edge/70 p-6 no-underline transition-colors duration-150 hover:border-tape/60 hover:bg-desk-edge/20"
+                  >
+                    <span className="font-sans text-[1.2rem] font-bold leading-[1.6rem] text-tape underline decoration-transparent decoration-2 underline-offset-4 transition-colors duration-150 group-hover:decoration-key-act">
+                      {item.question}
+                    </span>
+                    <span className="mt-3 font-mono text-[0.78rem] uppercase tracking-[0.12em] text-key-act">
+                      {item.source}
+                    </span>
+                    <span className="mt-1 font-sans text-[0.98rem] leading-[1.6rem] text-tape/70">
+                      {item.summary}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         {/* Interest. What is here, as one grid: the course, and the three
             instruments that sit beside it. */}
         <section aria-labelledby="whats-here" className={`${SECTION} on-grid bg-pa-ground`}>
@@ -377,8 +496,8 @@ export default function Home() {
               id="whats-here"
               className="max-w-5xl font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.12] tracking-[-0.02em] text-pa-ink"
             >
-              One course <Swatch surface="grid" /> and three instruments{" "}
-              <Swatch surface="tape" /> that keep their working in view <Swatch surface="lcd" />
+              A course <Swatch surface="grid" /> and three tools <Swatch surface="tape" /> that keep
+              their working in view <Swatch surface="lcd" />
             </h2>
 
             <ul className="mt-14 grid list-none grid-flow-dense auto-rows-[minmax(15rem,auto)] gap-4 p-0 md:grid-cols-2 lg:grid-cols-4">
@@ -469,7 +588,7 @@ export default function Home() {
                 How a chapter teaches
               </h2>
               <p className="mt-5 max-w-md font-sans text-[1.08rem] leading-[1.8rem] text-tape/70">
-                Each chapter follows the same order, so the shape of the page is familiar by the
+                Every chapter page is laid out the same way, so the layout is familiar by the
                 second one and the attention can go to the math.
               </p>
               <Link to={FIRST_CHAPTER_PATH} className={`${BUTTON_SECONDARY} mt-8`}>
@@ -498,7 +617,7 @@ export default function Home() {
               {INTEGERS_EXAMPLE && (
                 <TeachingStep
                   title="Examples are worked one line at a time"
-                  body="Every example is written the way it would be on paper: the question, each move with what it does, then the answer. Nothing is skipped because it seemed obvious."
+                  body="Where a chapter has worked examples, each is written the way it would be on paper: the question, each move with what it does, then the answer."
                 >
                   <figure className="on-grid grid-paper w-full border border-pa-paper-edge bg-pa-paper px-6 py-6 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)]">
                     <figcaption className="font-sans text-[0.78rem] font-bold uppercase tracking-[0.18em] text-pa-ink-soft">
@@ -531,7 +650,7 @@ export default function Home() {
 
               <TeachingStep
                 title="Each chapter leads into the next"
-                body="The chapters run in the order a class takes them. Each one ends by pointing to the next, and each assumes only what came before it."
+                body="The chapters run in the order a class takes them, and the foot of each page links to the previous and the next, so a chapter can be read on its own or as part of the whole."
               >
                 <ol className="flex w-full list-none flex-col gap-2 p-0">
                   {CHAPTERS.slice(6, 9).map((chapter, index) => (
@@ -581,6 +700,68 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Who the site is for and how far it reaches. Levels that do not exist
+            are named so a visitor knows the route, and marked in words (not
+            only by style) so nobody takes them for pages they can open. */}
+        <section
+          aria-labelledby="route"
+          className={`${SECTION} border-t border-desk-edge/70 bg-desk-deep`}
+        >
+          <div className="mx-auto grid w-full max-w-6xl [container-type:inline-size] gap-14 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-20">
+            <div>
+              <h2
+                id="route"
+                className="font-sans text-[clamp(2rem,1.4rem+2.4cqi,3.4rem)] font-bold leading-[1.08] tracking-[-0.02em] text-tape"
+              >
+                The route through math
+              </h2>
+              <p className="mt-5 max-w-xl font-sans text-[1.08rem] leading-[1.8rem] text-tape/70">
+                Math is learned in a sequence, and each level uses the one before it. This is the
+                route the site is built to follow. Only pre-algebra is open today. The other levels
+                are planned and have no pages yet.
+              </p>
+              <p className="mt-5 max-w-xl font-sans text-[1.08rem] leading-[1.8rem] text-tape/70">
+                MathPencil is for learners of every age: a child meeting a topic for the first
+                time, an adult coming back to math after years away. There are no accounts and no
+                email collection. The site is free, and advertising pays for it.
+              </p>
+            </div>
+
+            <ol className="flex list-none flex-col gap-2 p-0">
+              {LEVELS.map((level, index) => (
+                <li key={level.name}>
+                  {level.to ? (
+                    <Link
+                      to={level.to}
+                      className="flex items-baseline gap-5 border border-tape bg-tape px-5 py-4 font-sans text-ink no-underline transition-[filter] duration-150 hover:brightness-95"
+                    >
+                      <span className="font-mono text-[0.95rem] text-key-act-deep">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4">
+                        <span className="text-[1.1rem] font-bold">{level.name}</span>
+                        <span className="text-[0.9rem] font-semibold">
+                          Open now, {CHAPTERS.length} chapters
+                        </span>
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-baseline gap-5 border border-dashed border-desk-edge px-5 py-4 font-sans text-tape/70">
+                      <span className="font-mono text-[0.95rem]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4">
+                        <span className="text-[1.1rem] font-bold">{level.name}</span>
+                        <span className="text-[0.9rem]">Planned. Not available yet.</span>
+                      </span>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         {/* Action. */}
         <section aria-labelledby="start" className={`${SECTION} on-paper bg-tape text-ink`}>
           <div className="mx-auto w-full max-w-6xl [container-type:inline-size]">
@@ -588,14 +769,14 @@ export default function Home() {
               id="start"
               className="max-w-5xl font-sans text-[clamp(2.4rem,1.4rem+4cqi,5rem)] font-bold leading-[1.02] tracking-[-0.03em]"
             >
-              Start with chapter 1, {FIRST.title.toLowerCase()}.
+              Start with the introduction.
             </h2>
             <p className="mt-6 max-w-2xl font-sans text-[1.15rem] leading-[1.85rem] text-ink-soft">
               {FIRST.blurb} No account, no sign-up, and nothing to pay.
             </p>
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link to={FIRST_CHAPTER_PATH} className={BUTTON_PRIMARY}>
-                Start chapter 1
+                Start the course
               </Link>
               <Link
                 to="/pre-algebra"

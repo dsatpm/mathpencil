@@ -54,6 +54,14 @@ home page cannot claim an answer the site does not give. A preview helper throws
 an input its engine rejects, which fails the build. Keep it that way when adding a
 figure.
 
+The page speaks about math in general, but only pre-algebra and the three tools
+exist. `QUESTIONS` in `home.tsx` links each question to a chapter or tool and takes
+its summary from `CHAPTERS` or `TOOLS`, so a renamed slug fails the build. `LEVELS`
+lists the route through math: a level with no `to` is planned, renders as plain text
+marked "Planned. Not available yet.", and must stay out of the title, description,
+heading and structured data. `check:build` enforces all of that. When a level
+ships, give it a `to` and add it to `TOOLS`/the sitemap like any other page.
+
 Scroll motion is GSAP (`hooks/useLandingMotion.ts`), home page only, all inside a
 `prefers-reduced-motion: no-preference` query. Content is in its finished state
 before the script runs.

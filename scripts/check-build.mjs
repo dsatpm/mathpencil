@@ -58,10 +58,39 @@ for (const path of ["/", "/tools", "/tools/calculator", "/tools/scientific", "/p
 
 // The home page is the landing page, not a calculator.
 const home = await html("/");
-check(/<h1[^>]*>Pre-algebra, explained step by step\.<\/h1>/.test(home), "/ does not carry the landing page heading");
+const h1 = home.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
+check(
+  h1 !== null && visibleText(h1[1]).trim() === "Math, explained one step at a time.",
+  "/ does not carry the landing page heading",
+);
 check(home.includes('href="/tools"'), "/ does not link to /tools");
 check(home.includes('href="/pre-algebra/introduction"'), "/ does not link to chapter 1");
 check(home.includes(`<link rel="canonical" href="${SITE_URL}/"/>`), "/ has the wrong canonical");
+
+// "Start with your question": every question links to a page that was built, and
+// the section exists for the hero's anchor link to land on.
+check(home.includes('href="#questions"') && home.includes('id="questions"'), "/ has no questions section for the hero link");
+const questionPaths = [...home.matchAll(/<section id="questions"[\s\S]*?<\/section>/g)]
+  .flatMap((section) => [...section[0].matchAll(/href="([^"#]+)"/g)].map((match) => match[1]));
+check(questionPaths.length >= 8, `/ lists ${questionPaths.length} questions, expected at least 8`);
+for (const path of questionPaths) {
+  check(built.has(path), `/ has a question linking to ${path}, which was not built`);
+}
+
+// Levels that do not exist yet are named on the page but must stay out of every
+// place a search result or a share card quotes: the title, the description,
+// the heading and the structured data. They are marked "Planned" in words, and
+// they are not links.
+const head = home.slice(0, home.indexOf("</head>"));
+for (const word of ["grade-school", "high school", "college"]) {
+  check(!new RegExp(word, "i").test(head), `/ names planned level "${word}" in the head, where a search result would quote it`);
+}
+const homeBody = visibleText(home);
+check(homeBody.includes("Planned. Not available yet."), "/ does not mark the planned levels in words");
+check((homeBody.match(/Planned\. Not available yet\./g) ?? []).length === 3, "/ should mark exactly three levels as planned");
+for (const level of ["Grade-school math", "High school math", "College math"]) {
+  check(!new RegExp(`<a [^>]*>[^<]*${level}`).test(home), `/ links the planned level ${level}`);
+}
 
 // The figures the landing page quotes are the engines' answers, not typed ones.
 // If an engine changes, these fail and someone reads the page again.
