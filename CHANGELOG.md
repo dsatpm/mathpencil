@@ -16,6 +16,13 @@ calculators move under `/tools`.
   chapter 1. Every figure on it is worked out by the real engines when the page is
   built, and every passage it quotes is read from the course data, so it cannot
   disagree with the rest of the site.
+- **A landing page for math in general, not only pre-algebra.** The heading is
+  "Math, explained one step at a time", and a new "Start with your question"
+  section lists ten questions people arrive with, each linked to the chapter or
+  tool that answers it. A closing section shows the route through math and marks
+  grade-school, high school and college math as planned, in words, with no link,
+  because none of them has a page yet. The page title and description still name
+  only what exists today.
 - **`/tools`, a page for the three instruments.** The adding machine, the
   scientific calculator and the equation solver, each shown working the same kind
   of sum it is built for, with the rule it follows.
