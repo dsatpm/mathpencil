@@ -11,6 +11,9 @@
 #   SITE_URL         base URL, default https://mathpencil.com
 #   POLL_INTERVAL    seconds between version checks, default 20
 #   ROUTES           space-separated paths that must return 200
+#   CURL_MAX_TIME    seconds one request attempt may take, default 10
+#   CURL_RETRIES     retries after a timeout or 5xx, default 2
+#   CURL_RETRY_DELAY seconds between those retries, default 3
 set -euo pipefail
 
 SITE_URL="${SITE_URL:-https://mathpencil.com}"
@@ -28,12 +31,20 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-CURL=(curl --silent --show-error --location --max-time 20)
+# A request from a CI runner occasionally gets no answer at all and hangs until
+# the timeout, while the next one is answered in milliseconds. Retrying keeps
+# that from failing the check; a site that is really down fails every attempt.
+# curl retries timeouts and 5xx only, so a 404 still fails on the first try.
+# Worst case per request: 3 attempts of 10s plus 2 delays of 3s.
+CURL=(curl --silent --show-error --location
+  --max-time "${CURL_MAX_TIME:-10}"
+  --retry "${CURL_RETRIES:-2}" --retry-delay "${CURL_RETRY_DELAY:-3}")
 
 # The commit the live site reports, or empty when version.json is missing or
-# malformed. The query string defeats any cache between here and nginx.
+# malformed. The query string defeats any cache between here and nginx. curl's
+# error reaches stderr, so a failed run says whether it timed out or got a 404.
 live_sha() {
-  "${CURL[@]}" --fail "${SITE_URL}/version.json?t=$(date +%s)" 2>/dev/null \
+  "${CURL[@]}" --fail "${SITE_URL}/version.json?t=$(date +%s)" \
     | sed -n 's/.*"commit"[[:space:]]*:[[:space:]]*"\([0-9a-f]\{7,40\}\)".*/\1/p' \
     | head -n 1
 }

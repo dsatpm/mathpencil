@@ -23,10 +23,12 @@ jobs:
       - name: Smoke-test the pages and check the live commit is current
         run: |
           # A commit younger than the polling window may legitimately not be
-          # live yet. The push-time check owns that case.
+          # live yet. The push-time check owns that case. The 60s wait gives
+          # an unanswered version.json request a few more polls before the run
+          # fails; a deploy that was never picked up still fails after it.
           age=$(( $(date +%s) - $(git log -1 --format=%ct HEAD) ))
           if [ "$age" -gt 900 ]; then
-            .scripts/verify-deploy.sh --expect-sha "$(git rev-parse HEAD)" --wait 0
+            .scripts/verify-deploy.sh --expect-sha "$(git rev-parse HEAD)" --wait 60
           else
             echo "main is ${age}s old, inside the deploy window: smoke test only."
             .scripts/verify-deploy.sh

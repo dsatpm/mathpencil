@@ -43,6 +43,14 @@ calculators move under `/tools`.
   marked `noindex` and left out of the sitemap, and it carries the query and
   anchor across. `docs/deploy.md` has the nginx 301 that replaces it.
 
+### Fixed
+
+- **The site-health check no longer fails on one unanswered request.** A
+  `version.json` request that hung to the timeout failed the whole run, 5 times
+  in 60 runs, while the site was up. Requests now time out after 10 seconds and
+  are retried twice, the scheduled check polls for 60 seconds, and curl's error
+  is printed instead of discarded.
+
 ## 1.3.0 (22 September 2026)
 
 The pre-algebra lesson becomes a course. One long page is now twelve chapters,
