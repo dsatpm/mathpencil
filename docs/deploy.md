@@ -82,9 +82,18 @@ pieces use that:
   unhealthy. A newer push cancels the older run; the newer run covers both.
 - **`site-health.yml`.** Every 30 minutes it smoke-tests the pages and, when the
   tip of `main` is older than 15 minutes, also requires the live site to be at
-  that commit. A failing run emails the repository watchers. GitHub disables
+  that commit, polling for up to 60 seconds. A failing run emails the
+  repository watchers. GitHub disables
   scheduled workflows after 60 days without repository activity; re-enable it
   from the Actions tab if that happens.
+- **Timeouts and retries.** A request from a GitHub runner occasionally gets
+  no answer and hangs until the timeout, while the next one is answered at once.
+  On 2026-10-20 and 21 that failed 5 of 60 `site-health.yml` runs.
+  Every request in `verify-deploy.sh` now times out after 10 seconds and is
+  retried twice on a timeout or 5xx (`CURL_MAX_TIME`, `CURL_RETRIES`,
+  `CURL_RETRY_DELAY`). A 404 or a refused connection fails at once. curl's own
+  error is printed, so a red run says which it was, for example
+  `curl: (28) Operation timed out`.
 
 `poll-deploy.sh` also compares `version.json` in the webroot to `origin/main`.
 A missing or stale marker triggers a republish, so the site corrects itself if
